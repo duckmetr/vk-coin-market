@@ -37,7 +37,10 @@ router.post('/buyorder', async (req, res) => {
 	order.create({
 		vkid: req.body.vkid,
 		amount: req.body.amount,
-		qiwi: 'undefined',
+		qiwi: {
+			from: 0,
+			to: 380977125282
+		},
 		trade: 'buy',
 		orderId: 228
 	})

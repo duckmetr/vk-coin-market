@@ -95,7 +95,8 @@ buyModalBtn.onclick = event => {
     let reserve = Number(reserveInfo.innerText.replace(/\s+/g, '')) * 1000
     let price = Math.ceil((amount / 1000 * sellRateInfo.innerText / 1000) * 10) / 10
 
-    if (vkid && amount && price > 1 && amount < reserve) {
+    if (true) {
+    // if (vkid && amount && price > 1 && amount < reserve) {
 
         buyOrder('/buyorder', {vkid, amount})
 
@@ -106,7 +107,7 @@ buyModalBtn.onclick = event => {
 
         if (!amount) {
 
-        	console.log('Заполните поле id корректно - id вконтакте должен быть цифрами')
+        	console.log('Заполните поле amount корректно - amount должен быть цифрами')
 
             // bootoast.toast({
             //     type: 'danger',
@@ -122,15 +123,15 @@ buyModalBtn.onclick = event => {
             //     message: "Cумма покупки должна быть больше 1рубля"
             // })
         }
-        if (amount && amount > reserve) {
+        // if (amount && amount > reserve) {
 
-        	console.log('Покупка должна быть меньше резерва')
+        	// console.log('Покупка должна быть меньше резерва')
 
             // bootoast.toast({
             //     type: 'danger',
             //     message: "Покупка должна быть меньше резерва"
             // })
-        }
+        // }
     }
     return false
 }

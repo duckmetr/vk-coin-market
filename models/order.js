@@ -13,10 +13,7 @@ const orderSchema = new Schema({
 		from: Number,
 		to: Number
 	},
-	trade: {
-		type: String,
-		required: true
-	},
+	trade:String,
 	orderId: {
 		type: Number,
 		required: true
