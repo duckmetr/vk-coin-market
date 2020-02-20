@@ -52,8 +52,19 @@ router.post('/buyorder', async (req, res) => {
 
 router.post('/sellorder', async (req, res) => {
 
-	let link = ''
-	// let link = await vkcoin.api.getLink(req.body.amount, true)
+	let link = await vkcoin.api.getLink(req.body.amount, true)
+	let { vkid, amount, qiwi} = req.body
+
+	order.create({
+		vkid,
+		amount,
+		qiwi: {
+			from: 380977125282,
+			to: qiwi
+		},
+		trade: 'sell',
+		orderId: 69
+	})
 
 	res.json({
 		paymentData: {url: link},
