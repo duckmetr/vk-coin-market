@@ -26,9 +26,9 @@
                                     Или перейдите по ссылке <b>в приложении</b>
                                     ВКонтакте:
                                 </p>
-                                <a class="sell-coin-url " href="https://vk.com/coin#m20420816_3b9aca00_129044" target="_blank">https://vk.com/coin#m20420816_3b9aca00_129044</a>
+                                <a class="sell-coin-url " href="{{ link }}" target="_blank">{{ link }}</a>
                                 <p>
-                                    <a class="sell-coin-url btn btn-success stretched-link" href="https://vk.com/coin#m20420816_3b9aca00_129044" target="_blank">Перевести VK Coin</a>
+                                    <a class="sell-coin-url btn btn-success stretched-link" href="{{ link }}" target="_blank">Перевести VK Coin</a>
                                 </p>
                             </div>
                         </div>
@@ -37,62 +37,60 @@
                                 <tbody>
                                     <tr>
                                         <th>Номер транзакции</th>
-                                        <th>e631602b6e01d719838c3ec368c3f3cb</th>
+                                        <th>{{ _id }}</th>
                                     </tr>
                                     <tr>
                                         <th>Текущий статус</th>
                                         <th>
-                                            <span class="badge badge-pill badge-warning">Время заявки закончилось</span>
+                                            <span class="badge badge-pill badge-warning">{{ status }}</span>
                                         </th>
                                     </tr>
                                     <tr>
                                         <th>Отправитель</th>
                                         <th>
-                                            <a href="https://vk.com/id142129330" target="_blank">
-                                                <span class="d-none d-md-inline">https://vk.com/</span>
-                                                id142129330
+                                            <a href="https://vk.com/{{ vkid }}" target="_blank">
+                                                <span class="d-none d-md-inline">https://vk.com/</span>{{ vkid }}
                                             </a>
                                         </th>
                                     </tr>
                                     <tr>
                                         <th>Получатель</th>
                                         <th>
-                                            <a href="https://vk.com/id541198358" target="_blank">
-                                                <span class="d-none d-md-inline">https://vk.com/</span>
-                                                id541198358
+                                            <a href="https://vk.com/{{ vkid }}" target="_blank">
+                                                <span class="d-none d-md-inline">https://vk.com/</span>{{ vkid }}
                                             </a>
                                         </th>
                                     </tr>
                                     <tr>
                                         <th>Количество</th>
                                         <th>
-                                            1 000 000,000 <span class="DesktopContainer__coin smallcoin"></span>
+                                            {{ amount }}<span class="DesktopContainer__coin smallcoin"></span>
                                         </th>
                                     </tr>
                                     <tr>
                                         <th>Курс обмена</th>
                                         <th>
-                                            <b>1 000</b>
+                                            <b>1 000 000</b>
                                             <span class="DesktopContainer__coin smallcoin"></span>
-                                            - <b id="sellRateInfo">0.002</b>
+                                            - <b id="sellRateInfo">{{ rate }}</b>
                                             руб
                                         </th>
                                     </tr>
                                     <tr>
                                         <th>Тип сделки</th>
-                                        <th>Продажа VK Coin</th>
+                                        <th>{{ trade }} VK Coin</th>
                                     </tr>
                                     <tr>
                                         <th>Qiwi отправителя</th>
-                                        <th>380957526668</th>
+                                        <th>{{ qiwi.from }}</th>
                                     </tr>
                                     <tr>
                                         <th>Qiwi получателя</th>
-                                        <th>380977125282</th>
+                                        <th>{{ qiwi.to }}</th>
                                     </tr>
                                     <tr>
                                         <th>Время обновления</th>
-                                        <th>2020-02-02 23:01:05</th>
+                                        <th>{{ date }}</th>
                                     </tr>
                                 </tbody>
                             </table>

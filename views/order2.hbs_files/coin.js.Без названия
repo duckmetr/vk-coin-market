@@ -1,0 +1,418 @@
+$(document).ready(function () {
+    $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        }
+    });
+
+
+    let buyPrice;
+    let sellPrice;
+    let reserve;
+
+    /*selectors*/
+    let refreshInfo = $("#refreshInfo");
+    let buyerIdInput = $(".id-buyer-input"); // malferov - old is id-buy-input
+    let buyCoinsInput = $(".amount-buy-coins"); 
+    let sellerIdInput = $(".id-seller-input"); // malferov - old is id-sell-input
+    let sellCoinsInput = $(".amount-sell-coins");
+    let sellQiwiInput = $(".sell-qiwi-phone");
+    let qiwiPhone  = $("#sell_qiwi_phone");
+
+    let buyResultAmountCoins = $(".buyResultAmountCoins");
+    let buyResultAmountPrice = $(".buyResultAmountPrice");
+    let sellResultAmountCoins = $(".sellResultAmountCoins");
+    let sellResultAmountPrice = $(".sellResultAmountPrice");
+
+    let buyModalBtn = $('[data-target="#buyModal"]');
+    let sellModal = $('#sellModal');
+    let sellModalBtn = $('[data-target="#sellModal"]');
+    let sellCheckLink = $('.check-sell-link');
+
+
+    let sellQrImg = $(".sell-qr-img");
+    let sellCoinUrl = $(".sell-coin-url");
+
+    let reserveInfo = $("#reserveInfo");
+    let buyRateInfo = $("#buyRateInfo");
+    let sellRateInfo = $("#sellRateInfo");
+
+    /*utility*/
+    let sendApiRequest = (type, method, data, cb, cbe) => {
+        $.ajax({
+            type: type,
+            url: '/api/coin' + method,
+            data: data,
+            success: cb,
+            error: cbe,
+        });
+    };
+    
+    // @author malferov
+    // Ограничить длину ввода 12 знаками;
+    // номера РФ 11 знаков, номера Украины 12 знаков
+    qiwiPhone.on('input', (e) => {
+	let len = 12;
+	if (e.target.value.length > len) {
+    	    e.target.value = e.target.value.slice(0, len);
+	}
+    });
+    
+    refreshInfo.on('click', function (e) {
+        e.preventDefault();
+        $(this).attr('disabled', 'disabled');
+        sendApiRequest('get', '/getInfo', [], function (data) {
+            // console.log(data);
+            reserve = data.reserve;
+            sellPrice = data.sell;
+            buyPrice = data.buy;
+            $("#refreshInfo").removeAttr('disabled');
+            $("#buyRateInfo").text(parseFloat(data.buy * 1000).toLocaleString('ru-RU'));
+            $("#sellRateInfo").text(parseFloat(data.sell * 1000).toLocaleString('ru-RU'));
+            // $("#reserveInfo").text(toCoinsFormat(data.reserve));
+            // reserveInfo.animateNumber({number: data.reserve / 1000, numberStep: comma_separator_number_step});
+
+            // animateRubs(buyRateInfo,data.buy,5);
+            // animateRubs(sellRateInfo,data.sell,5);
+            animateCoins(reserveInfo, data.reserve);
+
+
+            buyPrice = data.buy;
+            sellPrice = data.sell;
+            reserve = data.reserve;
+	    
+	    // malferov - Посчитаем минимальное кол-во коинов на 1 руб.
+	    min_amount_buy = Math.ceil( (1000000 / (sellPrice * 100000)) * 100 );
+	    // Посчитаем минимальнеое кол-во рублей за коины
+	    min_amount_sell = Math.ceil( (1000000 / (buyPrice * 100000)) * 100 );
+	    // Добавим к полям кол-ва коинов атрибут min
+	    buyCoinsInput.attr('min', min_amount_buy);
+	    sellCoinsInput.attr('min', min_amount_sell);
+
+	    if (buyCoinsInput.val().length == 0) buyCoinsInput.val(min_amount_buy).trigger('input');
+	    if (sellCoinsInput.val().length == 0) sellCoinsInput.val(min_amount_sell).trigger('input');
+	    // malferov end
+	    
+            buyCoinsInput.attr('max', (reserve / 1000).toFixed()); // malferov toFixed()
+	    
+
+        });
+    });
+    refreshInfo.click();
+
+
+    buyCoinsInput.on('input', function (e) {
+        let amount = $(this).val();
+        if(amount.length > 14){
+            e.stopPropagation();
+            e.preventDefault();
+            return false;
+        }
+        // let price = Math.fround(Math.ceil(amount / 1000 * sellPrice));
+	// malferov
+        //let price = Math.ceil((amount / 1000 * sellPrice )*10)/10;
+	let price = ((amount / 1000 * sellPrice )*10/10).toFixed(2);
+	//console.log(price);
+        buyResultAmountCoins.text(toCoinsFormat(amount * 1000));
+        buyResultAmountPrice.text(parseFloat(price).toLocaleString('ru-RU'));
+    });
+
+    sellCoinsInput.on('input', function () {
+        let amount = $(this).val();
+        if(amount.length > 14){
+            e.stopPropagation();
+            e.preventDefault();
+            return false;
+        }
+        // let price = Math.fround(Math.round(amount / 1000 * buyPrice));
+        let price = Math.floor((amount / 1000 * buyPrice)*100)/100;
+        sellResultAmountCoins.text(toCoinsFormat(amount * 1000));
+        sellResultAmountPrice.text(parseFloat(price).toLocaleString('ru-RU'))
+    });
+
+    buyModalBtn.on('click', function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        if (buyerIdInput.val() && buyCoinsInput.val() > 1 && buyCoinsInput.val() < reserve) {
+            let params = {
+                'id': buyerIdInput.val(), // ID покупателя
+                'amount': buyCoinsInput.val() * 1000, // Кол-во коинов к покупке
+            };
+            sendApiRequest('post', '/buyOrder', params, function (data) {
+                window.open(data.paymentUrl, '_blank');
+                window.open('/coin/order/' + data.orderId,'_self');
+                // console.log(data);
+                return true;
+            },function (e) {
+                let errors = Object.values(JSON.parse(e.responseText).errors);
+                // console.log(errors)
+                bootoast.toast({
+                    type: 'danger',
+                    message: errors.join("<br>")
+                });
+            });
+        }else{
+
+            if(!buyerIdInput.val()){
+                bootoast.toast({
+                    type: 'danger',
+                    message: "Заполните поле ID страницы ВКонтакте корректно — ID ВКонтакте должен быть цифрами"
+                });
+            }
+            if(buyCoinsInput.val() < 1){
+                bootoast.toast({
+                    type: 'danger',
+                    message: "Cумма покупки должна быть больше 1 рубля"
+                });
+            }
+            if(buyCoinsInput.val() && buyCoinsInput.val() < reserve){
+                bootoast.toast({
+                    type: 'danger',
+                    message: "Покупка должна быть меньше резерва"
+                });
+            }
+        }
+        return false;
+    });
+
+    sellModalBtn.on('click', function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+	
+	// malferov
+        //let fullRubs = Math.ceil((sellCoinsInput.val() / 1000 * buyPrice )*10)/10;
+	let fullRubs = ((sellCoinsInput.val() / 1000 * buyPrice )*10/10).toFixed(2);
+	//console.log(fullRubs);
+
+        if (sellerIdInput.val() && sellQiwiInput.val() && fullRubs >= 1 && sellerIdInput.val()) {
+            let params = {
+                'id': sellerIdInput.val(), // ID продавца
+                'amount': sellCoinsInput.val() * 1000, // Коины к продаже
+                'qiwi': sellQiwiInput.val(), // QIWI-кошелек продавца коинов (юзера)
+            };
+            sendApiRequest('post', '/sellOrder', params, function (data) {
+                // window.open(data.paymentData.url, '_blank');
+                sellQrImg.attr('src',data.paymentData.qr);
+                sellCoinUrl.attr('href',data.paymentData.url);
+                sellCoinUrl.text(data.paymentData.url);
+                sellCheckLink.attr('href','/coin/order/' + data.orderId);
+                // console.log(data);
+                sellModal.modal('show');
+                return true;
+            },function (e) {
+                let errors = Object.values(JSON.parse(e.responseText).errors);
+                // console.log(errors)
+                bootoast.toast({
+                    type: 'danger',
+                    message: errors.join("<br>")
+                });
+            });
+        }else {
+            if(!sellerIdInput.val()){
+                bootoast.toast({
+                    type: 'danger',
+                    message: "Заполните поле ID страницы ВКонтакте корректно — ID ВКонтакте должен быть цифрами"
+                });
+            }
+            if(!sellQiwiInput.val()){
+                bootoast.toast({
+                    type: 'danger',
+                    message: "Укажите QIWI-кошелек, на который придут средства"
+                });
+            }
+            if(fullRubs < 1){
+                bootoast.toast({
+                    type: 'danger',
+                    message: "Cумма продажи должна быть больше 1 рубля"
+                });
+            }
+        }
+        return false;
+    });
+
+
+    function toCoinsFormat(amount) {
+        return (amount / 1000).toLocaleString('ru-RU')
+    }
+
+    function animateCoins(element, numbers, fromzero = false){
+        let decimal_places = 3;
+        let decimal_factor = decimal_places === 0 ? 1 : Math.pow(10, decimal_places);
+
+        if (fromzero){
+            element.prop('number', 0)
+        }
+
+        element.animateNumber(
+            {
+                number: numbers / 1000 * decimal_factor,
+                numberStep: function(now, tween) {
+                    let floored_number = Math.floor(now) / decimal_factor;
+                    let target = $(tween.elem);
+                    floored_number = floored_number.toLocaleString('ru-RU');
+
+                    target.text(floored_number);
+                }
+            },
+            1000
+        );
+    }
+    function animateRubs(element, numbers, decimals = 2, fromzero = false){
+        let decimal_places = decimals;
+        let decimal_factor = decimal_places === 0 ? 1 : Math.pow(10, decimal_places);
+
+        if (fromzero){
+            element.prop('number', 0)
+        }
+
+        element.animateNumber(
+            {
+                number: numbers * decimal_factor,
+                numberStep: function(now, tween) {
+                    let floored_number = Math.floor(now) / decimal_factor;
+                    let target = $(tween.elem);
+                    floored_number = floored_number.toLocaleString('ru-RU',{maximumFractionDigits :decimals});
+
+                    target.text(floored_number);
+                }
+            },
+            1000
+        );
+    }
+
+    setInterval(function () {
+        refreshInfo.click();
+    }, 15000)
+
+    setTimeout(function () {
+        $('.owl-carousel').owlCarousel({
+            loop:true,
+            nav:false,
+            smartSpeed:450,
+            autoplay:true,
+            autoplayTimeout:7000,
+            autoplayHoverPause:true,
+            items:1,
+        })
+    }, 50)
+
+
+
+
+
+
+    /**
+     @author malferov
+    */
+    function clear_all() {
+        document.querySelectorAll('.vk_user_photo').forEach(function(v, i) {
+            v.innerHTML = '';
+        });
+
+        document.querySelector('.id-buyer-input').value = '';
+        document.querySelector('.id-seller-input').value = '';
+
+        return true;
+    }
+
+    function callbackFunc(result) {
+        var user, user_id, user_firstname, user_lastname, user_photo;
+    
+        var buy = document.querySelector('.id-buyer-input');
+        var sell = document.querySelector('.id-seller-input');
+
+        if (result['error']) {
+            $('.vk_user_photo').html('<span class="text-danger">Пользователь не найден</span>');
+    
+            return;
+        }
+    
+        if (result['response']) {
+            user = result['response'][0];
+            user_id = user['id'];
+            user_photo = user['photo_50'];
+            user_firstname = user['first_name'];
+            user_lastname = user['last_name'];
+    
+            var html = '<a href="https://vk.com/id' + user_id + '" target="_blank" class="d-block text-center"><img id="vk_user_photo" src="' + user_photo +'" width="50" height="50" class="rounded-circle mt-2"><br><span class="d-inline-block mt-1 medium">'+user_firstname+' '+user_lastname+'</span></a>';
+            //html += '<a href="javascript:void(0)" onclick="clear_all()">Это не я!</a>';
+    
+            document.querySelectorAll('.vk_user_photo').forEach(function(v, i) {
+                v.innerHTML = html;
+            });
+            buy.value = user_id;
+            sell.value = user_id;
+        }
+    }
+
+    var buy = document.querySelector('.id-buyer-input');
+    var sell = document.querySelector('.id-seller-input');
+
+    function parse_input(data) {
+        // Если поле пустое или нет слеша
+        if (data.length == 0 || data.indexOf('/') == -1) return data;
+
+        // Если ввели адлрес со слешем
+        return data.replace(/^.*\//g, '');
+    }
+
+    function get_user(data) {
+        /*var script = document.createElement('script');
+        script.id = 'vk_user_script';
+        script.async = true;
+        script.src = 'https://api.vk.com/method/users.get?user_ids=' + data + '&fields=photo_50&v=5.103&access_token=edfa7fd5edfa7fd5edfa7fd5f4eda43c5aeedfaedfa7fd5b4480faba7f0b8ed9a90c0fa&callback=callbackFunc';
+        document.querySelector('head').append(script);*/
+	
+	var params = {
+	    'user': data, // VK User's ID or VK User's login
+	};
+	sendApiRequest('post', '/getVkUser', params, function (response) {
+                return callbackFunc( JSON.parse(response) );
+            }, function (e) {
+                let errors = Object.values(JSON.parse(e.responseText).errors);
+                // console.log(errors)
+                bootoast.toast({
+                    type: 'danger',
+                    message: errors.join("<br>")
+                });
+        });
+    }
+
+    function blur() {
+        var val = this.value;
+
+        if (val.length == 0) {
+            clear_all();
+
+
+            return
+        };
+
+        var data = parse_input(val);
+        var user = get_user(data);
+    }
+    buy.addEventListener('blur', blur);
+    sell.addEventListener('blur', blur);
+
+    function keyup() {
+        var val = this.value;
+
+        if (val.length == 0) {
+	    clear_all();
+	}
+    }
+
+    buy.addEventListener('keyup', keyup);
+    sell.addEventListener('keyup', keyup);
+
+    // End malferov
+
+
+
+
+
+
+
+
+
+});

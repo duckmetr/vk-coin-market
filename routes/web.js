@@ -4,6 +4,8 @@ const router = Router()
 const vkcoin = require('../models/vkcoin.js')
 const order = require('../models/order.js')
 
+const config = require('config')
+
 router.get('/', async (req, res) => {
 
 	// let transaction = await vkcoin.api.getTransactionList(2)
@@ -12,8 +14,8 @@ router.get('/', async (req, res) => {
 
 	res.render('index', {
 		transaction: transaction.response,
-		sell: 0.0026,
-		buy: 0.0024,
+		buy: config.get('price.buy'),
+		sell: config.get('price.sell'),
 		reserve: 17000000
 	})
 })
@@ -24,8 +26,8 @@ router.post('/getinfo', async (req, res) => {
 	// let myBalance = await vkcoin.api.getMyBalance()
 
 	res.json({
-		sell: 0.0026,
-		buy: 0.0024,
+		buy: config.get('price.buy'),
+		sell: config.get('price.sell'),
 		reserve: myBalance
 	})
 })
@@ -34,42 +36,57 @@ router.post('/buyorder', async (req, res) => {
 
 	//let result = await vkcoin.api.sendPayment(req.body.vkid, req.body.amount, true) // 1 коин = 1000 ед.
     
-	order.create({
-		vkid: req.body.vkid,
-		amount: req.body.amount,
+	let { vkid, amount, qiwi } = req.body
+	let orderId = String(+ new Date()).slice(-7)
+	let link = `https://qiwi.com/payment/form/99?extra%5B%27account%27%5D=${config.get('myQiwi')}&amountInteger=${20}&amountFraction=${2}&extra%5B%27comment%27%5D=${orderId}&currency=643&blocked[0]=comment&blocked[1]=account&blocked[2]=sum`
+
+	let resp = await order.create({
+		vkid,
+		amount,
+		link,
 		qiwi: {
-			from: 0,
-			to: 380977125282
+			from: '',
+			to: config.get('myQiwi')
 		},
-		trade: 'buy',
-		orderId: 228
+		rate: config.get('price.sell'),
+		trade: 'Покупка',
+		orderId
 	})
 
-    console.log(req.body)
+    console.log(resp)
 
-	res.json(req.body)
+	res.json({
+		paymentData: {url: link},
+		orderId: resp._id,
+		detail: {id: req.body.vkid, amount: req.body.amount, payload: resp._id}
+	})
 })
 
 router.post('/sellorder', async (req, res) => {
 
-	let link = await vkcoin.api.getLink(req.body.amount, true)
 	let { vkid, amount, qiwi} = req.body
+	let orderId = String(+ new Date()).slice(-7)
+	let link = `https://vk.com/coin#x${config.get('myvkid')}_${amount}_${orderId}`
 
-	order.create({
+	let resp = await order.create({
 		vkid,
 		amount,
+		link,
 		qiwi: {
-			from: 380977125282,
+			from: config.get('myQiwi'),
 			to: qiwi
 		},
-		trade: 'sell',
-		orderId: 69
+		rate: config.get('price.buy'),
+		trade: 'Продажа',
+		orderId
 	})
+
+	console.log(resp);
 
 	res.json({
 		paymentData: {url: link},
-		orderId: 'randomString',
-		detail: {id: req.body.vkid, amount: req.body.amount, payload: 'number'}
+		orderId: resp._id,
+		detail: {id: req.body.vkid, amount: req.body.amount, payload: resp._id}
 	})
 })
 
@@ -77,19 +94,15 @@ router.get('/order/:order', async (req, res) => {
 	
 	try {
 		let orderJson = await order.findById(req.params.order)
+		// res.json(orderJson)
+
 		console.log(orderJson)
-		res.json(orderJson)
+		orderJson ? res.status(200).render('order', orderJson) : res.status(404).send('no found')
 	}
 	catch (e) {
 		console.log(e.message)
-		res.status(500).send('no found')
+		res.status(404).send('no found')
 	}
-	
-	res.end()
-	
-	//res.json(orderJson)
-
-	//res.render('order')
 })
 
 module.exports = router

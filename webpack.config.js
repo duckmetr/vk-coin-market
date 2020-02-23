@@ -8,12 +8,13 @@ module.exports = {
 	entry: './assets/js/main.js',
 	output: {
 		filename: 'bundle.[contenthash].js',
-		path: __dirname + '/public'
+		path: __dirname + '/public',
+		publicPath: '/'
 	},
 	plugins: [
 		new HTMLWebpackPlugin({
-			template: __dirname + '/views/layouts/main.hbs',
-			filename: 'main.hbs',
+			template: __dirname + '/views/layouts/MainTemplate.hbs',
+			filename: 'MainTemplate.hbs',
 			inject: 'head'
 		}),
 		new ScriptExtHtmlWebpackPlugin({ defaultAttribute: 'defer' }),

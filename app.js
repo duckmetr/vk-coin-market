@@ -1,16 +1,15 @@
 const express = require('express')
+const app = express()
 const exphbs = require('express-handlebars')
 const mongoose = require('mongoose')
-const routes = require(__dirname + '/routes/web.js')
+const config = require('config')
 
-const PORT = process.env.PORT || 3000
-
-const app = express()
+const routes = require(__dirname + '/routes/web')
 
 const hbs =  exphbs.create({
 	extname: 'hbs',
 	layoutsDir: __dirname + '/public',
-	defaultLayout: 'main',
+	defaultLayout: 'MainTemplate',
 	partialsDir: __dirname + '/views/partials'
 })
 
@@ -19,10 +18,7 @@ app.set('view engine', 'hbs')
 app.set('views', 'views')
 
 app.use(express.json())
-// app.use(express.urlencoded({ extended: true }))
-
 app.use(require(__dirname + '/routes/web.js'))
-
 app.use(express.static(__dirname + '/public'))
 
 async function init() {
@@ -32,6 +28,8 @@ async function init() {
 			useFindAndModify: false,
 			useUnifiedTopology: true
 		})
+
+		const PORT = config.get('PORT')
 
 		app.listen(PORT, () => console.log(`Server is running on port: ${PORT}`))
 

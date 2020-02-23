@@ -1,6 +1,8 @@
-import CountUp from './CountUp'
 import '../css/flatly.css'
 import '../css/main.css'
+
+import CountUp from './CountUp'
+// import bootoast from './bootoast'
 
 let tabContent = document.querySelector('.tab-content')
 let tabPanes = tabContent.querySelectorAll('.tab-pane')
@@ -29,6 +31,10 @@ let sellResultAmountPrice = document.querySelector('.sellResultAmountPrice')
 let buyModalBtn = document.getElementById('buyModalBtn')
 let sellModalBtn = document.getElementById('sellModalBtn')
 
+// let sellQrImg = document.querySelector('.sell-qr-img')
+let sellCoinUrl = document.querySelector('.sell-coin-url')
+let sellCheckLink = document.querySelector('.check-sell-link')
+
 let toggleTabs = () => {
 	document.getElementById('pills-buy-tab').classList.toggle('active')
 	document.getElementById('pills-sell-tab').classList.toggle('active')
@@ -49,7 +55,10 @@ let getInfo = () => {
 let buyOrder = (url, body) => {
 	fetch(url, {method: 'post', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(body)})
 	.then(response => response.json())
-	.then(data => console.log(data))
+	.then(data => {
+        window.open(data.paymentData.url, '_blank')
+        window.location.href = '/order/' + data.orderId
+    })
 	.catch(e => console.log(e.message))
 }
 
@@ -57,8 +66,14 @@ let sellOrder = (url, body) => {
 	fetch(url, {method: 'post', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(body)})
 	.then(response => response.json())
 	.then(data => {
-        console.log(data)
-        window.open(data.paymentData.url, '_blank')
+        // window.open(data.paymentData.url, '_blank')
+        // sellQrImg.setAttribute('src',data.paymentData.qr)
+        sellCoinUrl.setAttribute('href',data.paymentData.url)
+        sellCoinUrl.innerText = data.paymentData.url
+        sellCheckLink.setAttribute('href','/order/' + data.orderId)
+        //дічь лохов
+        sellModal.classList.add('active')
+        document.querySelector('.modal-backdrop').classList.add('modal-show')
     })
 	.catch(e => console.log(e.message))
 }
@@ -104,34 +119,9 @@ buyModalBtn.onclick = event => {
         // window.open('/order/' + data.orderId,'_self')
 
     } else {
-
-        if (!amount) {
-
-        	console.log('Заполните поле amount корректно - amount должен быть цифрами')
-
-            // bootoast.toast({
-            //     type: 'danger',
-            //     message: "Заполните поле id корректно - id вконтакте должен быть цифрами"
-            // })
-        }
-        if (price < 1) {
-
-        	console.log('Cумма покупки должна быть больше 1 рубля')
-
-            // bootoast.toast({
-            //     type: 'danger',
-            //     message: "Cумма покупки должна быть больше 1рубля"
-            // })
-        }
-        // if (amount && amount > reserve) {
-
-        	// console.log('Покупка должна быть меньше резерва')
-
-            // bootoast.toast({
-            //     type: 'danger',
-            //     message: "Покупка должна быть меньше резерва"
-            // })
-        // }
+        // if (!amount) bootoast.toast({type: 'danger', message: "Заполните поле id корректно - id вконтакте должен быть цифрами"})
+        // if (price < 1) bootoast.toast({type: 'danger', message: "Cумма покупки должна быть больше 1рубля"})
+        // // if (amount && amount > reserve) bootoast.toast({type: 'danger', message: "Покупка должна быть меньше резерва"})
     }
     return false
 }
@@ -149,41 +139,16 @@ sellModalBtn.onclick = event => {
         sellOrder('/sellorder', {vkid, amount, qiwi: qiwiWallet})
 
     } else {
-
-        if (!vkid) {
-
-        	console.log('Заполните поле id корректно - id вконтакте должен быть цифрами')
-
-            // bootoast.toast({
-            //     type: 'danger',
-            //     message: "Заполните поле id корректно - id вконтакте должен быть цифрами"
-            // })
-        }
-        if (!qiwiWallet) {
-
-        	console.log('Укажите ваш qiwi кошелек, на который придут средства')
-
-            // bootoast.toast({
-            //     type: 'danger',
-            //     message: "Укажите ваш qiwi кошелек, на который придут средства"
-            // })
-        }
-        if (price < 1) {
-
-        	console.log('Cумма продажи должна быть больше 1 рубля')
-
-            // bootoast.toast({
-            //     type: 'danger',
-            //     message: "Cумма продажи должна быть больше 1 рубля"
-            // })
-        }
+        // if (!vkid) bootoast.toast({type: 'danger', message: "Заполните поле id корректно - id вконтакте должен быть цифрами"})
+        // if (!qiwiWallet) bootoast.toast({type: 'danger', message: "Укажите ваш qiwi кошелек, на который придут средства"})
+        // if (price < 1) bootoast.toast({type: 'danger', message: "Cумма продажи должна быть больше 1 рубля"})
     }
     return false
 }
 
 let updatePriceList = (data) => {
-	buyRateInfo.innerText = data.buy * 1000
-	sellRateInfo.innerText = data.sell * 1000
+	buyRateInfo.innerText = data.buy
+	sellRateInfo.innerText = data.sell
 
 	let animateNumber = new CountUp('reserveInfo', data.reserve / 1000, {
 		decimalPlaces: 3,

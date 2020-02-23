@@ -9,18 +9,28 @@ const orderSchema = new Schema({
 		type: Number,
 		required: true
 	},
+	link: {
+		type: String,
+		required: true
+	},
 	qiwi: {
 		from: Number,
 		to: Number
 	},
-	trade:String,
+	rate: Number,
+	trade: String,
 	orderId: {
 		type: Number,
-		required: true
+		required: true,
+		unique: true
 	},
 	status: {
 		type: String,
-		default: 'waitpayment'
+		default: 'Ожидание оплаты'
+	},
+	date: {
+		type: Date,
+		default: new Date()
 	}
 });
 

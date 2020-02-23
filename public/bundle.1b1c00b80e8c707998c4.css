@@ -46,8 +46,18 @@ body {
 	cursor: pointer;
 }
 
+.modal-backdrop {
+	display: none;
+}
+
 .active {
 	display: block;
+	opacity: 1 !important;
+}
+
+.modal-show {
+	display: block !important;
+	opacity: .5 !important;
 }
 
 

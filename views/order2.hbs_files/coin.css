@@ -1,0 +1,157 @@
+body{
+    font-family: -apple-system, Roboto, Helvetica Neue, Arial, sans-serif;
+}
+h1.common-title{font-size:18px;line-height:48px;padding:0;margin:0;flex-grow:99}
+.live-element:active{transform:translateY(1px)}
+.pointer {cursor: pointer}
+#refreshInfo {
+    padding: 17px;
+    border-radius: 999px
+}
+#refreshInfo:active {
+    transform: rotateZ(360deg)
+}
+button#refreshInfo:hover {
+    background-color:#e9ecef;
+    transition: background-color .25s ease-out, transform .15s ease-out
+}
+.DesktopContainer__coin {
+    display: inline-block;
+    background-image: url('/svg/vk_coin.svg');
+    width: 23px;
+    height: 23px;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: 50%;
+    margin-left: 1px;
+    vertical-align: -4px;
+}
+
+.DesktopContainer__catcoin {
+    display: inline-block;
+    background-image: url('/img/catcoinicon.png');
+    width: 23px;
+    height: 23px;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: 50%;
+    margin-left: 1px;
+    vertical-align: -4px;
+}
+
+.DesktopContainer__image {
+    display: inline-block;
+    width: 24px;
+    height: 24px;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: 50%;
+    margin-left: 1px;
+    vertical-align: -4px;
+}
+
+.DesktopContainer__image.transfer {
+    background-image: url('/svg/transfer.svg');
+    width: 17px;
+    height: 15px;
+    vertical-align: -4px;
+}
+.DesktopContainer__image.users {
+    background-image: url('/svg/users.svg');
+    height: 12px;
+    width: 18px;
+    vertical-align: -1px;
+}
+
+.smallcoin {
+    width: 16px;
+    height: 16px;
+    vertical-align: -2px
+}
+
+
+.badge{
+    padding: 0.35em .4em;
+}
+
+.reverseicon{
+    -webkit-transform: rotate(180deg);
+    -moz-transform: rotate(180deg);
+    -o-transform: rotate(180deg);
+    -ms-transform: rotate(180deg);
+    transform: rotate(180deg);
+}
+
+.table-overflow{
+    overflow-x: auto;
+}
+
+.logotype{
+    height: 50px;
+    margin-right: 8px
+}
+
+
+.btn{
+    box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+}
+
+.reload-img{
+    height: 12px;
+}
+
+.group-img-shadow{
+    box-shadow: 0 2px 4px rgba(0,0,0,0.16);
+}
+.shadow-padding{
+    padding: 4px 4px;
+}
+.owl-dots{
+    display: none;
+}
+.maxhbanners{
+    max-width: 722px;
+    max-height: 236px;
+}
+
+.clients-feedback-span{
+    font-size: 0.75rem;
+    font-weight: unset;
+    padding: 10px 16px
+}
+
+.form-control::placeholder {
+    color: #c7c7c7;
+}
+
+.navbsrounded{
+    border: 1px solid #5792d5;
+    border-radius: 1.25rem;
+}
+
+/* Chrome, Firefox, Opera*/
+:-ms-input-placeholder.form-control {
+    color: #c7c7c7;
+}
+
+/* Internet Explorer*/
+.form-control::-ms-input-placeholder {
+    color: #c7c7c7;
+}
+
+/* Microsoft Edge*/
+
+@media (max-width: 991px) {
+    body{
+        overflow-x: hidden;
+    }
+    .buysellcardheader{
+        padding: .75rem 0.25rem;
+    }
+}
+
+@media (max-width: 767px) {
+    .card-body.nopad{
+        padding: 0.25rem;
+    }
+}
