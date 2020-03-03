@@ -2,10 +2,8 @@ import '../css/flatly.css'
 import '../css/main.css'
 
 import CountUp from './CountUp'
+import QRCode from 'qrcode'
 // import bootoast from './bootoast'
-
-let tabContent = document.querySelector('.tab-content')
-let tabPanes = tabContent.querySelectorAll('.tab-pane')
 
 let pillsBuyTab = document.getElementById('pills-buy-tab')
 let pillsSellTab = document.getElementById('pills-sell-tab')
@@ -31,15 +29,25 @@ let sellResultAmountPrice = document.querySelector('.sellResultAmountPrice')
 let buyModalBtn = document.getElementById('buyModalBtn')
 let sellModalBtn = document.getElementById('sellModalBtn')
 
-// let sellQrImg = document.querySelector('.sell-qr-img')
+let sellQrImg = document.querySelector('.sell-qr-img')
 let sellCoinUrl = document.querySelector('.sell-coin-url')
 let sellCheckLink = document.querySelector('.check-sell-link')
+
+generateQR(sellCoinUrl.href)
+
+async function generateQR(text) {
+  try {
+    sellQrImg.src = await QRCode.toDataURL(text)
+  } catch (err) {
+    console.error(err)
+  }
+}
 
 let toggleTabs = () => {
 	document.getElementById('pills-buy-tab').classList.toggle('active')
 	document.getElementById('pills-sell-tab').classList.toggle('active')
 
-	tabPanes.forEach(item => {
+	document.querySelectorAll('.tab-pane').forEach(item => {
 		item.classList.toggle('show')
 		item.classList.toggle('active')
 	})
@@ -57,7 +65,7 @@ let buyOrder = (url, body) => {
 	.then(response => response.json())
 	.then(data => {
         window.open(data.paymentData.url, '_blank')
-        window.location.href = '/order/' + data.orderId
+        window.location.href = '/order/' + data.detail.payload
     })
 	.catch(e => console.log(e.message))
 }
@@ -67,11 +75,12 @@ let sellOrder = (url, body) => {
 	.then(response => response.json())
 	.then(data => {
         // window.open(data.paymentData.url, '_blank')
-        // sellQrImg.setAttribute('src',data.paymentData.qr)
+        generateQR(data.paymentData.url)
+
         sellCoinUrl.setAttribute('href',data.paymentData.url)
         sellCoinUrl.innerText = data.paymentData.url
-        sellCheckLink.setAttribute('href','/order/' + data.orderId)
-        //дічь лохов
+        sellCheckLink.setAttribute('href','/order/' + data.detail.payload)
+        //дічь ot лохов
         sellModal.classList.add('active')
         document.querySelector('.modal-backdrop').classList.add('modal-show')
     })
@@ -159,8 +168,14 @@ let updatePriceList = (data) => {
 
 let toCoinsFormat = amount => (amount * 1).toLocaleString('ru-RU')
 
+//event listeners
 pillsBuyTab.addEventListener('click', toggleTabs)
 pillsSellTab.addEventListener('click', toggleTabs)
 refreshInfoBtn.addEventListener('click', getInfo)
+
+document.querySelector('.modal-close').addEventListener('click', e => {
+    sellModal.classList.remove('active')
+    document.querySelector('.modal-backdrop').classList.remove('modal-show')
+})
 
 setInterval(getInfo, 25000)

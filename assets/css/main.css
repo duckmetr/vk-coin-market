@@ -47,6 +47,9 @@ body {
 	opacity: .5 !important;
 }
 
+.sell-coin-url {
+	margin-top: 10px;
+}
 
 .DesktopContainer__coin {
     display: inline-block;

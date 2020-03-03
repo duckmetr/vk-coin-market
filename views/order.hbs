@@ -10,28 +10,9 @@
                         </a>
                     </div>
                     <div class="card-body order">
-                        <div class="row justify-content-center text-center pb-5">
-                            <div class="col-12">
-                                <p class="text-center">Используйте qr код: </p>
-                                <img class="sell-qr-img" src="https://chart.googleapis.com/chart?chs=250x250&amp;cht=qr&amp;choe=UTF-8&amp;chl=https%3A%2F%2Fvk.com%2Fcoin%23m20420816_3b9aca00_129044" alt="https://chart.googleapis.com/chart?chs=250x250&amp;cht=qr&amp;choe=UTF-8&amp;chl=https%3A%2F%2Fvk.com%2Fcoin%23m20420816_3b9aca00_129044">
-                                <br>
-                                <small>
-                                    Скан работает только через камеру вконтакте.<br>(Перейдите на вкладку новостей, сделайте свайп слева-направо или же нажмите на кнопку камеры в левом верхнем углу.
-                                    Наведите
-                                    камеру на код. Готово!)
-                                </small>
-                            </div>
-                            <div class="col-12 pt-3">
-                                <p>
-                                    Или перейдите по ссылке <b>в приложении</b>
-                                    ВКонтакте:
-                                </p>
-                                <a class="sell-coin-url " href="{{ link }}" target="_blank">{{ link }}</a>
-                                <p>
-                                    <a class="sell-coin-url btn btn-success stretched-link" href="{{ link }}" target="_blank">Перевести VK Coin</a>
-                                </p>
-                            </div>
-                        </div>
+
+                        {{> order_buy }}
+
                         <div class="table-overflow">
                             <table class="table">
                                 <tbody>
@@ -48,16 +29,16 @@
                                     <tr>
                                         <th>Отправитель</th>
                                         <th>
-                                            <a href="https://vk.com/{{ vkid }}" target="_blank">
-                                                <span class="d-none d-md-inline">https://vk.com/</span>{{ vkid }}
+                                            <a href="https://vk.com/id{{ vk.from }}" target="_blank">
+                                                <span class="d-none d-md-inline">https://vk.com/id</span>{{ vk.from }}
                                             </a>
                                         </th>
                                     </tr>
                                     <tr>
                                         <th>Получатель</th>
                                         <th>
-                                            <a href="https://vk.com/{{ vkid }}" target="_blank">
-                                                <span class="d-none d-md-inline">https://vk.com/</span>{{ vkid }}
+                                            <a href="https://vk.com/id{{ vk.to }}" target="_blank">
+                                                <span class="d-none d-md-inline">https://vk.com/id</span>{{ vk.to }}
                                             </a>
                                         </th>
                                     </tr>
@@ -72,7 +53,7 @@
                                         <th>
                                             <b>1 000 000</b>
                                             <span class="DesktopContainer__coin smallcoin"></span>
-                                            - <b id="sellRateInfo">{{ rate }}</b>
+                                            - <b id="sellRateInfo">{{ price }}</b>
                                             руб
                                         </th>
                                     </tr>

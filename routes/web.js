@@ -1,5 +1,6 @@
 const { Router } = require('express')
 const router = Router()
+// const mongoose = require('mongoose')
 
 const vkcoin = require('../models/vkcoin.js')
 const order = require('../models/order.js')
@@ -35,13 +36,17 @@ router.post('/getinfo', async (req, res) => {
 router.post('/buyorder', async (req, res) => {
 
 	//let result = await vkcoin.api.sendPayment(req.body.vkid, req.body.amount, true) // 1 коин = 1000 ед.
-    
+
 	let { vkid, amount, qiwi } = req.body
-	let orderId = String(+ new Date()).slice(-7)
-	let link = `https://qiwi.com/payment/form/99?extra%5B%27account%27%5D=${config.get('myQiwi')}&amountInteger=${20}&amountFraction=${2}&extra%5B%27comment%27%5D=${orderId}&currency=643&blocked[0]=comment&blocked[1]=account&blocked[2]=sum`
+	let comment = String(+ new Date()).slice(-7)
+	let link = `https://qiwi.com/payment/form/99?extra%5B%27account%27%5D=${config.get('myQiwi')}&amountInteger=${20}&amountFraction=${2}&extra%5B%27comment%27%5D=${comment}&currency=643&blocked[0]=comment&blocked[1]=account&blocked[2]=sum`
 
 	let resp = await order.create({
-		vkid,
+		// _id: new mongoose.Types.ObjectId(),
+		vk: {
+			from: config.get('myvkid'),
+			to: vkid
+		},
 		amount,
 		link,
 		qiwi: {
@@ -50,14 +55,14 @@ router.post('/buyorder', async (req, res) => {
 		},
 		rate: config.get('price.sell'),
 		trade: 'Покупка',
-		orderId
+		comment
 	})
 
     console.log(resp)
 
 	res.json({
 		paymentData: {url: link},
-		orderId: resp._id,
+		comment: resp._id,
 		detail: {id: req.body.vkid, amount: req.body.amount, payload: resp._id}
 	})
 })
@@ -65,28 +70,32 @@ router.post('/buyorder', async (req, res) => {
 router.post('/sellorder', async (req, res) => {
 
 	let { vkid, amount, qiwi} = req.body
-	let orderId = String(+ new Date()).slice(-7)
-	let link = `https://vk.com/coin#x${config.get('myvkid')}_${amount}_${orderId}`
+	let comment = String(+ new Date()).slice(-7)
+	let link = `https://vk.com/coin#x${config.get('myvkid')}_${amount}_${comment}`
 
 	let resp = await order.create({
-		vkid,
+		// _id: new mongoose.Types.ObjectId(),
+		vk: {
+			from: vkid,
+			to: config.get('myvkid')
+		},
 		amount,
 		link,
 		qiwi: {
 			from: config.get('myQiwi'),
 			to: qiwi
 		},
-		rate: config.get('price.buy'),
+		price: config.get('price.buy'),
 		trade: 'Продажа',
-		orderId
+		comment
 	})
 
 	console.log(resp);
 
 	res.json({
 		paymentData: {url: link},
-		orderId: resp._id,
-		detail: {id: req.body.vkid, amount: req.body.amount, payload: resp._id}
+		// orderId: resp._id,
+		detail: {id: vkid, amount, payload: resp._id}
 	})
 })
 
@@ -94,9 +103,7 @@ router.get('/order/:order', async (req, res) => {
 	
 	try {
 		let orderJson = await order.findById(req.params.order)
-		// res.json(orderJson)
 
-		console.log(orderJson)
 		orderJson ? res.status(200).render('order', orderJson) : res.status(404).send('no found')
 	}
 	catch (e) {

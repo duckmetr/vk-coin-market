@@ -16,12 +16,6 @@
                     </div>
                 </div>
             </div>
-           <!--  <div class="col-lg-8 pt-4 order-md-3">
-                <div class="owl-carousel owl-theme">
-                    <div class="item shadow-padding"> <a href="https://vk.com/app7144370" target="_blank"><img src="/img/xbetcoin.jpg" alt="Ссылка на xbetcoin" class="w-100 h-100 rounded group-img-shadow maxhbanners"></a></div>
-                    <div class="item shadow-padding"> <a href="https://vk.com/aionpwcoin" target="_blank" ><img src="/img/group.jpg?v=2" alt="Ссылка на Сообщество Coin Market" class="w-100 h-100 rounded group-img-shadow maxhbanners"></a></div>
-                </div>
-            </div> -->
             <div class="col-lg-8 pt-4 order-md-2">
                 <div class="card">
                     <div class="card-header buysellcardheader">
@@ -43,7 +37,7 @@
                                     <div class="form-row">
                                         <div class="form-group col-lg-6">
                                             <label for="inputEmail4">Ваш id страницы вконтакте <a href="http://regvk.com/id/" target="_blank">узнать тут</a></label>
-                                            <input type="number" class="form-control id-buy-input" placeholder="id цифрами (ссылки не принимаются)">
+                                            <input type="number" class="form-control id-buy-input" placeholder="id цифрами (ссылки не принимаются)" value="539428720">
                                         </div>
                                         <div class="form-group col-lg-6">
                                             <label for="inputState">Количество VK Coin</label>
@@ -51,7 +45,7 @@
                                                 <div class="input-group-prepend">
                                                     <div class="input-group-text"><span class="DesktopContainer__coin"></span></div>
                                                 </div>
-                                                <input type="number" class="form-control text-right amount-buy-coins" placeholder="Количество коинов" min="0" max="1000000000" step="1000">
+                                                <input type="number" class="form-control text-right amount-buy-coins" placeholder="Количество коинов" min="0" max="{{ reserve }}" step="1000000" value="1000000">
                                                 <div class="input-group-append">
                                                     <span class="input-group-text">.000</span>
                                                 </div>
@@ -91,7 +85,7 @@
                                         </div>
                                         <div class="form-group col-lg-6">
                                             <label for="inputEmail4">Ваш Qiwi кошелек для получения средств</label>
-                                            <input type="text" class="form-control sell-qiwi-phone" placeholder="Ваш qiwi кошелек без +" value="380977125282">
+                                            <input type="text" class="form-control sell-qiwi-phone" placeholder="Ваш qiwi кошелек без +" value="380637448181">
                                         </div>
                                         <div class="col-12 col-lg-6">
                                             Вы продаете <span><b class="sellResultAmountCoins">0</b>
@@ -167,7 +161,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="exampleModalCenterTitle">Продажа VK Coins</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <button type="button" class="close modal-close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
@@ -175,7 +169,9 @@
                     <div class="row justify-content-center text-center">
                         <div class="col-12">
                             <p>Искользуйте код: </p>
-                            <img class="sell-qr-img" src="" alt=""><br>
+                            <div class="sell-qr">
+                                <img class="sell-qr-img" src="" alt="qrcode">
+                            </div>
                             <small>Скан работает только через камеру вконтакте.<br> (Перейдите на вкладку новостей, сделайте свайп слева-направо или же нажмите на кнопку камеры в левом верхнем углу. Наведите камеру на
                                 код. Готово!)
                             </small>

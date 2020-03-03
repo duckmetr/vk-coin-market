@@ -1,9 +1,14 @@
 const {Schema, model} = require('mongoose')
 
 const orderSchema = new Schema({
-	vkid: {
-		type: Number,
-		required: true
+	// _id: Schema.Types.ObjectId,
+	status: {
+		type: String,
+		default: 'Ожидание оплаты'
+	},
+	vk: {
+		from: Number,
+		to: Number
 	},
 	amount: {
 		type: Number,
@@ -17,16 +22,12 @@ const orderSchema = new Schema({
 		from: Number,
 		to: Number
 	},
-	rate: Number,
+	price: Number,
 	trade: String,
-	orderId: {
+	comment: {
 		type: Number,
 		required: true,
-		unique: true
-	},
-	status: {
-		type: String,
-		default: 'Ожидание оплаты'
+		// unique: true
 	},
 	date: {
 		type: Date,

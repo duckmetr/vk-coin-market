@@ -5,8 +5,8 @@
   "main": "app.js",
   "scripts": {
     "dev": "nodemon app.js",
-    "build": "npx webpack --mode production",
-    "watch": "npx webpack --mode deelopment --watch"
+    "build": "npx webpack --mode development",
+    "watch": "npx webpack --mode development --watch"
   },
   "keywords": [],
   "author": "",
@@ -29,6 +29,7 @@
     "express": "^4.17.1",
     "express-handlebars": "^3.1.0",
     "mongoose": "^5.8.11",
-    "node-vkcoinapi": "^1.8.0"
+    "node-vkcoinapi": "^1.8.0",
+    "qrcode": "^1.4.4"
   }
 }
