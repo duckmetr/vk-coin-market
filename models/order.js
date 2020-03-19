@@ -22,10 +22,15 @@ const orderSchema = new Schema({
 		from: Number,
 		to: Number
 	},
+	exchangeRate: Number,
 	price: Number,
-	trade: String,
+	trade: {
+		tip: String,
+		buy: Boolean,
+		sell: Boolean 
+	},
 	comment: {
-		type: Number,
+		type: String,
 		required: true,
 		// unique: true
 	},

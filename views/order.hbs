@@ -10,8 +10,14 @@
                         </a>
                     </div>
                     <div class="card-body order">
+                        
+                        {{#if trade.buy }}
+                            {{> order_buy }}
+                        {{/if}}
 
-                        {{> order_buy }}
+                        {{#if trade.sell }}
+                            {{> order_sell }}
+                        {{/if}}
 
                         <div class="table-overflow">
                             <table class="table">
@@ -53,13 +59,13 @@
                                         <th>
                                             <b>1 000 000</b>
                                             <span class="DesktopContainer__coin smallcoin"></span>
-                                            - <b id="sellRateInfo">{{ price }}</b>
+                                            - <b id="sellRateInfo">{{ exchangeRate }}</b>
                                             руб
                                         </th>
                                     </tr>
                                     <tr>
                                         <th>Тип сделки</th>
-                                        <th>{{ trade }} VK Coin</th>
+                                        <th>{{ trade.tip }} VK Coin</th>
                                     </tr>
                                     <tr>
                                         <th>Qiwi отправителя</th>
