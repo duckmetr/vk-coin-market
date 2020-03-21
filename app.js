@@ -24,55 +24,55 @@ app.use(require(__dirname + '/routes/web.js'))
 app.use(require(__dirname + '/routes/callback.js'))
 app.use(express.static(__dirname + '/public'))
 
-// app.use(vkcoin.updates.getExpressMiddleware('/callback/vkcoin'))
+app.use(vkcoin.updates.getExpressMiddleware('/callback/vkcoin'))
 
-// vkcoin.updates.onTransfer(async (event) => {
+vkcoin.updates.onTransfer(async (event) => {
 
-// 	let result = await order.findOne({
-// 		comment: event.payload,
-// 		amount: event.amount,
-// 		vk: { from: event.fromId, to: event.toId },
-// 		status: 'Ожидание оплаты'
-// 	})
+	let result = await order.findOne({
+		comment: event.payload,
+		amount: event.amount,
+		vk: { from: event.fromId, to: event.toId },
+		status: 'Ожидание оплаты'
+	})
 
-// 	if (result) {
-// 		console.log('send pay to qiwi')
+	if (result) {
+		console.log('send pay to qiwi')
 
-// 		let data = {
-// 	        id: (1000 * Date.now()).toString(),
-// 	        sum: {
-// 	          amount: result.price.toFixed(2),
-// 	          currency: '643'
-// 	        },
-// 	        paymentMethod: {
-// 	          type: 'Account',
-// 	          accountId: '643'
-// 	        },
-// 	        comment: result.comment,
-// 	        fields: {
-// 	          account: '+' + result.qiwi.to
-// 	        }
-//     	}
+		let data = {
+	        id: (1000 * Date.now()).toString(),
+	        sum: {
+	          amount: result.price.toFixed(2),
+	          currency: '643'
+	        },
+	        paymentMethod: {
+	          type: 'Account',
+	          accountId: '643'
+	        },
+	        comment: result.comment,
+	        fields: {
+	          account: '+' + result.qiwi.to
+	        }
+    	}
 
-// 		let resQiwi = await fetch('https://edge.qiwi.com/sinap/api/v2/terms/99/payments', {
-// 			method: 'post',
-// 			headers: {
-// 				'Content-Type': 'application/json',
-// 				Accept: 'application/json',
-// 				Authorization: `Bearer ${config.get('qiwiToken')}`
-// 			},
-// 			body: JSON.stringify(data)
-// 		})
+		let resQiwi = await fetch('https://edge.qiwi.com/sinap/api/v2/terms/99/payments', {
+			method: 'post',
+			headers: {
+				'Content-Type': 'application/json',
+				Accept: 'application/json',
+				Authorization: `Bearer ${config.get('qiwiToken')}`
+			},
+			body: JSON.stringify(data)
+		})
 
-// 		//console.log(await resQiwi.json())
+		//console.log(await resQiwi.json())
 
-// 		result.status = 'Оплачено'
-//   		result.save()
-// 	}
-// 	else {
-// 		console.log('not found or payed')
-// 	}
-// })
+		result.status = 'Оплачено'
+  		result.save()
+	}
+	else {
+		console.log('not found or payed')
+	}
+})
 
 async function init() {
 	try {
@@ -82,7 +82,9 @@ async function init() {
 			useUnifiedTopology: true
 		})
 
-		const PORT = config.get('PORT') || 3000
+		//const PORT = config.get('PORT') || 3000
+
+		const PORT = process.env.PORT || 3000
 
 		app.listen(PORT, () => console.log(`Server is running on port: ${PORT}`))
 
