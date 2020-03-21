@@ -82,12 +82,13 @@ async function init() {
 			useUnifiedTopology: true
 		})
 
-		const PORT = config.get('PORT')
+		const PORT = config.get('PORT') || 3000
 
 		app.listen(PORT, () => console.log(`Server is running on port: ${PORT}`))
 
 	} catch (e) {
-		console.log(e)
+		console.log(e.message)
+		process.exit(1)
 	}
 }
 
