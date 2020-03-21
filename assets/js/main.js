@@ -131,6 +131,10 @@ buyModalBtn.onclick = event => {
         // if (!amount) bootoast.toast({type: 'danger', message: "Заполните поле id корректно - id вконтакте должен быть цифрами"})
         // if (price < 1) bootoast.toast({type: 'danger', message: "Cумма покупки должна быть больше 1рубля"})
         // // if (amount && amount > reserve) bootoast.toast({type: 'danger', message: "Покупка должна быть меньше резерва"})
+
+        if (!amount) alert('Заполните поле id корректно - id вконтакте должен быть цифрами')
+        if (price < 1) alert('Cумма покупки должна быть больше 1рубля')
+        if (amount && amount > reserve) alert('Покупка должна быть меньше резерва')
     }
     return false
 }
@@ -151,6 +155,10 @@ sellModalBtn.onclick = event => {
         // if (!vkid) bootoast.toast({type: 'danger', message: "Заполните поле id корректно - id вконтакте должен быть цифрами"})
         // if (!qiwiWallet) bootoast.toast({type: 'danger', message: "Укажите ваш qiwi кошелек, на который придут средства"})
         // if (price < 1) bootoast.toast({type: 'danger', message: "Cумма продажи должна быть больше 1 рубля"})
+
+        if (!vkid) alert('Заполните поле id корректно - id вконтакте должен быть цифрами')
+        if (!qiwiWallet) alert('Укажите ваш qiwi кошелек, на который придут средства')
+        if (price < 1) alert('Cумма продажи должна быть больше 1 рубля')
     }
     return false
 }
