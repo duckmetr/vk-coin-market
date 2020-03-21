@@ -22,8 +22,8 @@ router.get('/', async (req, res) => {
 
 router.post('/getinfo', async (req, res) => {
 
-	let myBalance = 17000000
-	// let myBalance = await vkcoin.api.getMyBalance()
+	// let myBalance = 17000000
+	let myBalance = await vkcoin.api.getMyBalance()
 
 	res.json({
 		buy: config.get('price.buy'),

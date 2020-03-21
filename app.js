@@ -82,9 +82,7 @@ async function init() {
 			useUnifiedTopology: true
 		})
 
-		//const PORT = config.get('PORT') || 3000
-
-		const PORT = process.env.PORT || 3000
+		const PORT = process.env.PORT || config.get('PORT')
 
 		app.listen(PORT, () => console.log(`Server is running on port: ${PORT}`))
 
