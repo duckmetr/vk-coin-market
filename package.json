@@ -4,8 +4,9 @@
   "description": "",
   "main": "app.js",
   "scripts": {
-    "dev": "nodemon app.js",
-    "build": "npx webpack --mode development",
+    "start": "nodemon app.js",
+    "dev": "npx webpack --mode development",
+    "build": "npx webpack --mode production",
     "watch": "npx webpack --mode development --watch"
   },
   "keywords": [],
