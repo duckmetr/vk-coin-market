@@ -9,6 +9,9 @@ const config = require('config')
 
 router.get('/', async (req, res) => {
 
+	// let myBalance = 17000000
+	let myBalance = await vkcoin.api.getMyBalance()
+
 	// let transaction = await vkcoin.api.getTransactionList(2)
 	let transaction = {response: null}
 
@@ -16,7 +19,7 @@ router.get('/', async (req, res) => {
 		transaction: transaction.response,
 		buy: config.get('price.buy'),
 		sell: config.get('price.sell'),
-		reserve: 17000000
+		reserve: myBalance
 	})
 })
 
