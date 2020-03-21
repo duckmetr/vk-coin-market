@@ -1,3 +1,15 @@
 {
-	"PORT": 3000
+	"PORT": 80,
+	"price": {
+		"buy": 2.4,
+		"sell": 2.6
+	},
+	"myvkid": 142129330,
+	"myQiwi": 380977125282,
+	"qiwiToken": "605941ffaf3720eed85edb7773b04368",
+	"vkcoin": {
+		"key": "tQc=G7ps.PiVDV[gayBKg1EXF=DyuWr0s!d-6tnkYH[R.*Wr;G",
+		"userId": 142129330,
+		"token": "49a44d3f87226e23df4e38465b7d7e192802b833bb6d816e11b4fb892f65a9147895cee80e695ad76a5aa"
+	}
 }
