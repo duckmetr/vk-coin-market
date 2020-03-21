@@ -10,7 +10,6 @@ const config = require('config')
 router.get('/', async (req, res) => {
 
 	// let transaction = await vkcoin.api.getTransactionList(2)
-
 	let transaction = {response: null}
 
 	res.render('index', {
@@ -34,8 +33,6 @@ router.post('/getinfo', async (req, res) => {
 })
 
 router.post('/buyorder', async (req, res) => {
-
-	//let result = await vkcoin.api.sendPayment(req.body.vkid, req.body.amount, true) // 1 коин = 1000 ед.
 
 	let { vkid, amount, qiwi } = req.body
 

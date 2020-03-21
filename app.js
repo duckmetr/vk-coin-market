@@ -2,9 +2,8 @@ const express = require('express')
 const app = express()
 const exphbs = require('express-handlebars')
 const mongoose = require('mongoose')
+const fetch = require('node-fetch')
 const config = require('config')
-
-//const routes = require(__dirname + '/routes/web')
 
 const vkcoin = require(__dirname + '/models/vkcoin.js')
 const order = require(__dirname + '/models/order.js')
@@ -38,12 +37,40 @@ vkcoin.updates.onTransfer(async (event) => {
 
 	if (result) {
 		console.log('send pay to qiwi')
-		//set status 'opla4eno'
-		result.status = 'Оплачено';
-  		result.save();	
+
+		let data = {
+	        id: (1000 * Date.now()).toString(),
+	        sum: {
+	          amount: result.price.toFixed(2),
+	          currency: '643'
+	        },
+	        paymentMethod: {
+	          type: 'Account',
+	          accountId: '643'
+	        },
+	        comment: result.comment,
+	        fields: {
+	          account: '+' + result.qiwi.to
+	        }
+    	}
+
+		let resQiwi = await fetch('https://edge.qiwi.com/sinap/api/v2/terms/99/payments', {
+			method: 'post',
+			headers: {
+				'Content-Type': 'application/json',
+				Accept: 'application/json',
+				Authorization: `Bearer ${config.get('qiwiToken')}`
+			},
+			body: JSON.stringify(data)
+		})
+
+		//console.log(await resQiwi.json())
+
+		result.status = 'Оплачено'
+  		result.save()
 	}
 	else {
-		console.log('Not found or payed')
+		console.log('not found or payed')
 	}
 })
 
