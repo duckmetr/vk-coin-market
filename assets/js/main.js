@@ -1,7 +1,7 @@
 import '../css/flatly.css'
 import '../css/main.css'
 
-import CountUp from './CountUp'
+import CountUp from './CountUp.js'
 import QRCode from 'qrcode'
 // import bootoast from './bootoast'
 
