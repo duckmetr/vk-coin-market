@@ -2,6 +2,8 @@ const { Router } = require('express')
 const router = Router()
 // const mongoose = require('mongoose')
 
+const { check, validationResult } = require('express-validator')
+
 const vkcoin = require('../models/vkcoin.js')
 const order = require('../models/order.js')
 
@@ -9,8 +11,8 @@ const config = require('config')
 
 router.get('/', async (req, res) => {
 
-	// let myBalance = 17000000
-	let myBalance = await vkcoin.api.getMyBalance()
+	let myBalance = 17000000
+	//let myBalance = await vkcoin.api.getMyBalance()
 
 	// let transaction = await vkcoin.api.getTransactionList(2)
 	let transaction = {response: null}
@@ -25,8 +27,8 @@ router.get('/', async (req, res) => {
 
 router.post('/getinfo', async (req, res) => {
 
-	// let myBalance = 17000000
-	let myBalance = await vkcoin.api.getMyBalance()
+	let myBalance = 17000000000
+	// let myBalance = await vkcoin.api.getMyBalance()
 
 	res.json({
 		buy: config.get('price.buy'),

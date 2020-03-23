@@ -61,7 +61,7 @@ let getInfo = () => {
 }
 
 let buyOrder = (url, body) => {
-	fetch(url, {method: 'post', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(body)})
+    fetch(url, {method: 'post', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(body)})
 	.then(response => response.json())
 	.then(data => {
         window.open(data.paymentData.url, '_blank')
@@ -115,27 +115,18 @@ buyModalBtn.onclick = event => {
     event.preventDefault()
 
     let vkid = Number(buyIdInput.value)
-    let amount = Number(buyCoinsInput.value) * 1000
-    let reserve = Number(reserveInfo.innerText.replace(/\s+/g, '')) * 1000
+    let amount = Number(buyCoinsInput.value)
+    let reserve = Number(reserveInfo.innerText.replace(/\s+/g, ''))
     let price = Math.ceil((amount / 1000 * sellRateInfo.innerText / 1000) * 10) / 10
 
-    if (true) {
-    // if (vkid && amount && price > 1 && amount < reserve) {
+    console.log(`amount: ${amount} vs ${reserve}`)
 
-        buyOrder('/buyorder', {vkid, amount})
+    !vkid ? alert('Заполните поле id корректно - id вконтакте должен быть цифрами') :
+    price < 1 ? alert('Cумма покупки должна быть больше 1 рубля') :
+    amount > reserve ? alert('Покупка должна быть меньше резерва') : buyOrder('/buyorder', {vkid, amount})
+    // amount > reserve ? console.log(`amount: ${amount} vs reserve: ${reserve} true`) : console.log(`amount: ${amount} vs reserve: ${reserve} false`)
 
-        // window.open(data.paymentUrl, '_blank')
-        // window.open('/order/' + data.orderId,'_self')
 
-    } else {
-        // if (!amount) bootoast.toast({type: 'danger', message: "Заполните поле id корректно - id вконтакте должен быть цифрами"})
-        // if (price < 1) bootoast.toast({type: 'danger', message: "Cумма покупки должна быть больше 1рубля"})
-        // // if (amount && amount > reserve) bootoast.toast({type: 'danger', message: "Покупка должна быть меньше резерва"})
-
-        if (!amount) alert('Заполните поле id корректно - id вконтакте должен быть цифрами')
-        if (price < 1) alert('Cумма покупки должна быть больше 1рубля')
-        if (amount && amount > reserve) alert('Покупка должна быть меньше резерва')
-    }
     return false
 }
 
@@ -144,22 +135,14 @@ sellModalBtn.onclick = event => {
 
     let vkid = Number(sellIdInput.value)
     let amount = Number(sellCoinsInput.value) * 1000
-    let qiwiWallet = Number(sellQiwiInput.value)
+    let qiwi = Number(sellQiwiInput.value)
     let price = Math.ceil((amount / 1000 * buyRateInfo.innerText / 1000) * 10) / 10
 
-    if (vkid && amount && price >= 1 && qiwiWallet) {
+    !vkid ? alert('Заполните поле id корректно - id вконтакте должен быть цифрами') :
+    price < 1 ? alert('Cумма продажи должна быть больше 1 рубля') :
+    !qiwi ? alert('Укажите ваш qiwi кошелек, на который придут средства') :
+    sellOrder('/sellorder', {vkid, amount, qiwi})
 
-        sellOrder('/sellorder', {vkid, amount, qiwi: qiwiWallet})
-
-    } else {
-        // if (!vkid) bootoast.toast({type: 'danger', message: "Заполните поле id корректно - id вконтакте должен быть цифрами"})
-        // if (!qiwiWallet) bootoast.toast({type: 'danger', message: "Укажите ваш qiwi кошелек, на который придут средства"})
-        // if (price < 1) bootoast.toast({type: 'danger', message: "Cумма продажи должна быть больше 1 рубля"})
-
-        if (!vkid) alert('Заполните поле id корректно - id вконтакте должен быть цифрами')
-        if (!qiwiWallet) alert('Укажите ваш qiwi кошелек, на который придут средства')
-        if (price < 1) alert('Cумма продажи должна быть больше 1 рубля')
-    }
     return false
 }
 

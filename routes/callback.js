@@ -39,7 +39,7 @@ router.post('/callback/qiwi', async (req, res) => {
 
 	}
 
-	res.status(200).end()
+	res.sendStatus(200)
 })
 
 module.exports = router

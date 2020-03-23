@@ -15,6 +15,8 @@ const hbs =  exphbs.create({
 	partialsDir: __dirname + '/views/partials'
 })
 
+app.disable('x-powered-by')
+
 app.engine('hbs', hbs.engine)
 app.set('view engine', 'hbs')
 app.set('views', 'views')
@@ -50,7 +52,7 @@ vkcoin.updates.onTransfer(async (event) => {
 	        },
 	        comment: result.comment,
 	        fields: {
-	          account: '+' + result.qiwi.to
+	          account: result.qiwi.to
 	        }
     	}
 
@@ -88,7 +90,7 @@ async function init() {
 
 	} catch (e) {
 		console.log(e.message)
-		process.exit(1)
+		//process.exit(1)
 	}
 }
 
