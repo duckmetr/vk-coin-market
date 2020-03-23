@@ -11,11 +11,17 @@ const config = require('config')
 
 router.get('/', async (req, res) => {
 
-	let myBalance = 17000000
-	//let myBalance = await vkcoin.api.getMyBalance()
+	let myBalance
+	let transaction
 
-	// let transaction = await vkcoin.api.getTransactionList(2)
-	let transaction = {response: null}
+	try {
+		myBalance = await vkcoin.api.getMyBalance()
+		transaction = await vkcoin.api.getTransactionList(2)
+	}
+	catch (e) {
+		myBalance = 18_000_000
+		transaction = {response: null}
+	}
 
 	res.render('index', {
 		transaction: transaction.response,
@@ -27,8 +33,14 @@ router.get('/', async (req, res) => {
 
 router.post('/getinfo', async (req, res) => {
 
-	let myBalance = 17000000000
-	// let myBalance = await vkcoin.api.getMyBalance()
+	let myBalance
+
+	try {
+		myBalance = await vkcoin.api.getMyBalance()
+	}
+	catch (e) {
+		myBalance = 18_000_000
+	}
 
 	res.json({
 		buy: config.get('price.buy'),
@@ -110,11 +122,8 @@ router.post('/sellorder', async (req, res) => {
 		comment
 	})
 
-	// console.log(resp)
-
 	res.json({
 		paymentData: {url: link},
-		// orderId: resp._id,
 		detail: {id: vkid, amount, payload: resp._id}
 	})
 })
