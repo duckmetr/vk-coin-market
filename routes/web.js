@@ -18,11 +18,15 @@ router.get('/', async (req, res) => {
 		myBalance = await vkcoin.api.getMyBalance()
 		transaction = await vkcoin.api.getTransactionList(2)
 
+		console.log(transaction)
+
 		transaction.slice(0, 10)
 	}
 	catch (e) {
-		myBalance = 18_000_000
+		myBalance = 18_000_000	
 		transaction = {response: null}
+
+		console.log(e.message)
 	}
 
 	res.render('index', {
