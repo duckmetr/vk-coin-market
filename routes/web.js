@@ -12,21 +12,22 @@ const config = require('config')
 router.get('/', async (req, res) => {
 
 	let myBalance
+	let transAll
 	let transaction
 
 	try {
 		myBalance = await vkcoin.api.getMyBalance()
-		transaction = await vkcoin.api.getTransactionList(2)
+		transAll = await vkcoin.api.getTransactionList(2)
 
-		transaction.response.slice(0, 10)
+		transaction = transaction.response.slice(0, 10)
 	}
 	catch (e) {
 		myBalance = 18_000_000	
-		transaction = {response: null}
+		transaction = null
 	}
 
 	res.render('index', {
-		transaction: transaction.response,
+		transaction,
 		buy: config.get('price.buy'),
 		sell: config.get('price.sell'),
 		reserve: myBalance
