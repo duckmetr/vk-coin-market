@@ -53,7 +53,7 @@ vkcoin.updates.onTransfer(async (event) => {
 	        },
 	        comment: result.comment,
 	        fields: {
-	          account: result.qiwi.to
+	          account: '+' + result.qiwi.to
 	        }
     	}
 
@@ -67,7 +67,7 @@ vkcoin.updates.onTransfer(async (event) => {
 			body: JSON.stringify(data)
 		})
 
-		//console.log(await resQiwi.json())
+		console.log(await resQiwi.json())
 
 		result.status = 'Оплачено'
   		result.save()

@@ -55,6 +55,11 @@ router.post('/buyorder', [check('vkid', 'Ваш ID вконтакте долже
 						  check('amount', 'Сумма должна быть не менее 1000 или не более резерва').isInt({min: 1e3, max: 1e30}),
 						 ], async (req, res) => {
 
+	let errors = validationResult(req);
+	if (!errors.isEmpty()) {
+		return res.status(422).json({ errors: errors.array() });
+	}
+
 	let { vkid, amount } = req.body
 
 	let comment = String(+ new Date()).slice(-7)
@@ -100,6 +105,10 @@ router.post('/sellorder', [check('vkid', 'Ваш ID вконтакте долж�
 						   check('amount', 'Сумма должна быть не менее 1000 или количество указано не верно').isInt({min: 1e3, max: 1e30}),
 						   check('qiwi', 'Ваш QIWI кошелек указан неверно').isMobilePhone(['uk-UA', 'ru-RU'])
 						  ], async (req, res) => {
+	let errors = validationResult(req);
+	if (!errors.isEmpty()) {
+		return res.status(422).json({ errors: errors.array() });
+	}
 
 	let { vkid, amount, qiwi} = req.body
 	let comment = String(+ new Date()).slice(-7)
