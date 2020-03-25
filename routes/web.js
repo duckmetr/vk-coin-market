@@ -18,7 +18,7 @@ router.get('/', async (req, res) => {
 	try {
 		myBalance = await vkcoin.api.getMyBalance()
 		transAll = await vkcoin.api.getTransactionList(2)
-		transaction = transAll.response.slice(0, 10)
+		transaction = transAll.response.slice(0, 15)
 	}
 	catch (e) {
 		myBalance = 18_000_000	
@@ -51,14 +51,16 @@ router.post('/getinfo', async (req, res) => {
 	})
 })
 
-router.post('/buyorder', async (req, res) => {
+router.post('/buyorder', [check('vkid', 'Ваш ID вконтакте должен быть в цифровом виде').isInt({min: 1}),
+						  check('amount', 'Сумма должна быть не менее 1000 или не более резерва').isInt({min: 1e3, max: 1e30}),
+						 ], async (req, res) => {
 
-	let { vkid, amount, qiwi } = req.body
+	let { vkid, amount } = req.body
 
 	let comment = String(+ new Date()).slice(-7)
 	let price = Math.ceil((amount / 1000000 * config.get('price.sell') / 1000) * 10) / 10
 
-	let splitPrice = String(price).split('.', 2)
+	let splitPrice = String(price).split('.')
 	if (splitPrice[1].length == 1) splitPrice[1] += '0' // for qiwi payment link
 
 	let link = `https://qiwi.com/payment/form/99?extra%5B%27account%27%5D=${config.get('myQiwi')}&amountInteger=${splitPrice[0]}&amountFraction=${splitPrice[1]}&extra%5B%27comment%27%5D=${comment}&currency=643&blocked[0]=comment&blocked[1]=account&blocked[2]=sum`
@@ -90,11 +92,14 @@ router.post('/buyorder', async (req, res) => {
 	res.json({
 		paymentData: {url: link},
 		comment: resp._id,
-		detail: {id: req.body.vkid, amount: req.body.amount, payload: resp._id}
+		detail: {vkid, amount, payload: resp._id}
 	})
 })
 
-router.post('/sellorder', async (req, res) => {
+router.post('/sellorder', [check('vkid', 'Ваш ID вконтакте должен быть в цифровом виде').isInt({min: 1}),
+						   check('amount', 'Сумма должна быть не менее 1000 или количество указано не верно').isInt({min: 1e3, max: 1e30}),
+						   check('qiwi', 'Ваш QIWI кошелек указан неверно').isMobilePhone(['uk-UA', 'ru-RU'])
+						  ], async (req, res) => {
 
 	let { vkid, amount, qiwi} = req.body
 	let comment = String(+ new Date()).slice(-7)
@@ -141,6 +146,18 @@ router.get('/order/:order', async (req, res) => {
 		console.log(e.message)
 		res.status(404).send('no found')
 	}
+})
+
+router.post('/submit', [check('vkid', 'Ваш ID вконтакте должен быть в цифровом виде').isInt({min: 1}),
+						check('amount', 'Сумма должна быть не менее 1000 или не более резерва').isInt({min: 1e3, max: 1e20}),
+						check('qiwi', 'Ваш QIWI кошелек указан неверно').isMobilePhone(['uk-UA', 'ru-RU'])
+					   ], (req, res) => {
+	let errors = validationResult(req);
+	if (!errors.isEmpty()) {
+		return res.status(422).json({ errors: errors.array() });
+	}
+
+	res.json({response: 'ok'})
 })
 
 module.exports = router

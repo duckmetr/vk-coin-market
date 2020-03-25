@@ -8,14 +8,15 @@ const config = require('config')
 const vkcoin = require(__dirname + '/models/vkcoin.js')
 const order = require(__dirname + '/models/order.js')
 
+app.disable('x-powered-by')
+
+// view engine setup
 const hbs =  exphbs.create({
 	extname: 'hbs',
 	layoutsDir: __dirname + '/public',
 	defaultLayout: 'MainTemplate',
 	partialsDir: __dirname + '/views/partials'
 })
-
-app.disable('x-powered-by')
 
 app.engine('hbs', hbs.engine)
 app.set('view engine', 'hbs')
