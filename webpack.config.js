@@ -8,8 +8,8 @@ module.exports = {
 	entry: './assets/js/main.js',
 	output: {
 		filename: 'bundle.[contenthash].js',
-		path: __dirname + '/public',
-		publicPath: '/'
+		path: __dirname + '/public/js',
+		publicPath: '/js/'
 	},
 	plugins: [
 		new HTMLWebpackPlugin({

@@ -1,5 +1,5 @@
 {
-  "name": "aion",
+  "name": "coinmarket",
   "version": "1.0.0",
   "description": "",
   "main": "app.js",
@@ -10,7 +10,7 @@
     "build": "npx webpack --mode production",
     "watch": "npx webpack --mode development --watch"
   },
-  "keywords": [],
+  "keywords": ["vk", "coin", "market", "buy", "sell"],
   "author": "",
   "license": "ISC",
   "devDependencies": {

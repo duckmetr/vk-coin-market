@@ -13,7 +13,7 @@ app.disable('x-powered-by')
 // view engine setup
 const hbs =  exphbs.create({
 	extname: 'hbs',
-	layoutsDir: __dirname + '/public',
+	layoutsDir: __dirname + '/public/js',
 	defaultLayout: 'MainTemplate',
 	partialsDir: __dirname + '/views/partials'
 })
@@ -39,7 +39,7 @@ vkcoin.updates.onTransfer(async (event) => {
 	})
 
 	if (result) {
-		console.log('send pay to qiwi')
+		console.log('start send pay to qiwi')
 
 		let data = {
 	        id: (1000 * Date.now()).toString(),
@@ -57,23 +57,34 @@ vkcoin.updates.onTransfer(async (event) => {
 	        }
     	}
 
-		let resQiwi = await fetch('https://edge.qiwi.com/sinap/api/v2/terms/99/payments', {
-			method: 'post',
-			headers: {
-				'Content-Type': 'application/json',
-				Accept: 'application/json',
-				Authorization: `Bearer ${config.get('qiwiToken')}`
-			},
-			body: JSON.stringify(data)
-		})
+    	try {
+    		let resQiwi = await fetch('https://edge.qiwi.com/sinap/api/v2/terms/99/payments', {
+				method: 'post',
+				headers: {
+					'Content-Type': 'application/json',
+					Accept: 'application/json',
+					Authorization: `Bearer ${config.get('qiwiToken')}`
+				},
+				body: JSON.stringify(data)
+			})
 
-		console.log(await resQiwi.json())
+			console.log(await resQiwi.json())
+			//если есть ошибка в ответе киви кинуть throw
 
-		result.status = 'Оплачено'
-  		result.save()
+			result.status = 'Оплачено'
+	  		result.save()
+    	}
+    	catch (e) {
+    		console.log('произошла ошыбка')
+    		//вернуть коини
+
+    		result.status = 'Возвращены'
+		  	result.save()
+    	}
+
 	}
 	else {
-		console.log('not found or payed')
+		console.log('not found current payment')
 	}
 })
 

@@ -123,9 +123,8 @@ buyModalBtn.onclick = event => {
 
     !vkid ? alert('Заполните поле id корректно - id вконтакте должен быть цифрами') :
     price < 1 ? alert('Cумма покупки должна быть больше 1 рубля') :
-    amount > reserve ? alert('Покупка должна быть меньше резерва') : buyOrder('/buyorder', {vkid, amount})
-    // amount > reserve ? console.log(`amount: ${amount} vs reserve: ${reserve} true`) : console.log(`amount: ${amount} vs reserve: ${reserve} false`)
-
+    amount > reserve ? alert('Покупка должна быть меньше резерва') :
+    buyOrder('/buyorder', {vkid, amount})
 
     return false
 }
@@ -150,14 +149,13 @@ let updatePriceList = (data) => {
 	buyRateInfo.innerText = data.buy
 	sellRateInfo.innerText = data.sell
 
-	let animateNumber = new CountUp('reserveInfo', data.reserve / 1000, {
-		decimalPlaces: 3,
-		separator: ' '
-	})
+    //let reserve = +data.reserve.replace(/[^.\d]+/g,"").replace( /^([^\.]*\.)|\./g, '$1' )
+
+	let animateNumber = new CountUp('reserveInfo', +data.reserve, {decimalPlaces: 3, separator: ' '})
 	animateNumber.start()
 }
 
-let toCoinsFormat = amount => (amount * 1).toLocaleString('ru-RU')
+let toCoinsFormat = amount => Number(amount).toLocaleString('ru-RU')
 
 //event listeners
 pillsBuyTab.addEventListener('click', toggleTabs)
@@ -168,5 +166,23 @@ document.querySelector('.modal-close').addEventListener('click', e => {
     sellModal.classList.remove('active')
     document.querySelector('.modal-backdrop').classList.remove('modal-show')
 })
+
+// let mutations = document.querySelector('.mutation-elems')
+
+// let observer = new MutationObserver(mutations => {
+
+//     for(let mutation of mutations) {
+//         console.log(mutations); // console.log(изменения)
+//         mutation.target.innerText = toCoinsFormat(mutation.target.innerText)
+//     }
+
+// });
+
+// // наблюдать за всем, кроме атрибутов
+// observer.observe(mutations, {
+//     childList: true, // наблюдать за непосредственными детьми
+//     subtree: true, // и более глубокими потомками
+//     characterDataOldValue: true // передавать старое значение в колбэк
+// })
 
 setInterval(getInfo, 25000)
