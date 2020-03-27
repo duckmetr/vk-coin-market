@@ -31,6 +31,7 @@ router.get('/', async (req, res) => {
 			}
 		})
 		console.log(transaction)
+		//jhjhkj
 	}
 	catch (e) {
 		myBalance = 0	
