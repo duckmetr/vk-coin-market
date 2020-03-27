@@ -18,6 +18,7 @@ router.get('/', async (req, res) => {
 
 		let transAll = await vkcoin.api.getTransactionList(2)
 		transaction = transAll.response.slice(0, 15)
+		transaction = transaction.map((item) => item.amount = (item / 1000).toLocaleString().replace(/[$,]/g, '.'))
 
 		console.log(transaction)
 	}
