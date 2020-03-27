@@ -22,7 +22,7 @@ router.get('/', async (req, res) => {
 		console.log(transaction)
 
 		transaction = transaction.map((item) => {
-			let amount = Number(item.amount / 1000).toLocaleString('ru-RU')//.replace(/[$,]/g, '.')
+			let amount = Number(item.amount / 1000).toLocaleString('ru-RU').replace(/[$,]/g, ' ') + '.000'
 
 			return {
 				id: item.id,
