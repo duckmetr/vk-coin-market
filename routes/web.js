@@ -19,7 +19,7 @@ router.get('/', async (req, res) => {
 		let transAll = await vkcoin.api.getTransactionList(2)
 		transaction = transAll.response.slice(0, 15)
 		transaction = transaction.map((item) => {
-			let amount = Number(item.amount).toLocaleString() + '.000'
+			let amount = Number(item.amount).toLocaleString('ru-RU') + '.000'
 
 			return {
 				id: item.id,
@@ -39,7 +39,7 @@ router.get('/', async (req, res) => {
 		transaction,
 		buy: config.get('price.buy'),
 		sell: config.get('price.sell'),
-		reserve: (myBalance / 1000).toLocaleString().replace(/[$,]/g, '.')
+		reserve: (myBalance / 1000).toLocaleString('ru-RU').replace(/[$,]/g, '.')
 	})
 })
 
