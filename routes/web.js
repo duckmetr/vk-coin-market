@@ -18,6 +18,9 @@ router.get('/', async (req, res) => {
 
 		let transAll = await vkcoin.api.getTransactionList(2)
 		transaction = transAll.response.slice(0, 15)
+
+		console.log(transaction)
+
 		transaction = transaction.map((item) => {
 			let amount = Number(item.amount).toLocaleString('ru-RU') + '.000'
 
@@ -29,6 +32,8 @@ router.get('/', async (req, res) => {
 				created_at: item.created_at
 			}
 		})
+
+		console.log(transaction)
 	}
 	catch (e) {
 		myBalance = 0	
