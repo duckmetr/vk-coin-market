@@ -12,12 +12,10 @@ const order = require('../models/order.js')
 
 router.post('/callback/qiwi', async (req, res) => {
 
-	console.log(req.body)
-
+	//console.log(req.body)
 	let { payment } = req.body
 
 	if (payment) {
-
 		let result = await order.findOne({
 			comment: payment.comment,
 			amount: payment.sum.amount,
@@ -25,13 +23,24 @@ router.post('/callback/qiwi', async (req, res) => {
 			status: 'Ожидание оплаты'
 		})
 
+		result.status = 'Оплачено'
+		result.save()
+
 		if (result) {
-			console.log('send vkcoin')
+			try {
+				let resPayCoin = await vkcoin.api.sendPayment(result.vk.to, result.amount, true) // 1 коин = 1000 ед.
 
-			let resPayCoin = await vkcoin.api.sendPayment(result.vk.to, result.amount, true) // 1 коин = 1000 ед.
+				console.log(resPayCoin)
+				//if err then throw
 
-			result.status = 'Оплачено'
-			result.save()
+				result.status = 'Успех'
+				result.save()
+			} catch (e) {
+				console.log('vernut sheykeli')
+
+				result.status = 'Возврат'
+				result.save()
+			}	
 		}
 		else {
 			console.log('not found order')

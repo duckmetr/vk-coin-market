@@ -10,7 +10,6 @@ const order = require(__dirname + '/models/order.js')
 
 app.disable('x-powered-by')
 
-// view engine setup
 const hbs =  exphbs.create({
 	extname: 'hbs',
 	layoutsDir: __dirname + '/public/js',
@@ -23,6 +22,7 @@ app.set('view engine', 'hbs')
 app.set('views', 'views')
 
 app.use(express.json())
+
 app.use(require(__dirname + '/routes/web.js'))
 app.use(require(__dirname + '/routes/callback.js'))
 app.use(express.static(__dirname + '/public'))
@@ -39,25 +39,26 @@ vkcoin.updates.onTransfer(async (event) => {
 	})
 
 	if (result) {
-		console.log('start send pay to qiwi')
-
-		let data = {
-	        id: (1000 * Date.now()).toString(),
-	        sum: {
-	          amount: result.price.toFixed(2),
-	          currency: '643'
-	        },
-	        paymentMethod: {
-	          type: 'Account',
-	          accountId: '643'
-	        },
-	        comment: result.comment,
-	        fields: {
-	          account: '+' + result.qiwi.to
-	        }
-    	}
+		result.status = 'Получены коины'
+	  	result.save()
 
     	try {
+    		let data = {
+		        id: (1000 * Date.now()).toString(),
+		        sum: {
+		          amount: result.price.toFixed(2),
+		          currency: '643'
+		        },
+		        paymentMethod: {
+		          type: 'Account',
+		          accountId: '643'
+		        },
+		        comment: result.comment,
+		        fields: {
+		          account: '+' + result.qiwi.to
+		        }
+    		}
+
     		let resQiwi = await fetch('https://edge.qiwi.com/sinap/api/v2/terms/99/payments', {
 				method: 'post',
 				headers: {
@@ -68,20 +69,19 @@ vkcoin.updates.onTransfer(async (event) => {
 				body: JSON.stringify(data)
 			})
 
-			console.log(await resQiwi.json())
-			//если есть ошибка в ответе киви кинуть throw
+    		let resQiwiJson = await resQiwi.json()
 
-			result.status = 'Оплачено'
+			if (resQiwiJson.code) {
+				throw new Error(resQiwiJson.message)
+			}
+
+			result.status = 'Успех'
 	  		result.save()
-    	}
-    	catch (e) {
-    		console.log('произошла ошыбка')
-    		//вернуть коини
-
-    		result.status = 'Возвращены'
+    	} catch (e) {
+			let resPayCoin = await vkcoin.api.sendPayment(result.vk.from, result.amount, true) // 1 коин = 1000 ед.
+    		result.status = 'Возврат'
 		  	result.save()
     	}
-
 	}
 	else {
 		console.log('not found current payment')

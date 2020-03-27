@@ -10,14 +10,16 @@ const { check, validationResult } = require('express-validator')
 router.get('/', async (req, res) => {
 
 	let myBalance
-	let transAll
 	let transaction
 
 	try {
 		// myBalance = 20_000_000_634
 		myBalance = await vkcoin.api.getMyBalance()
-		transAll = await vkcoin.api.getTransactionList(2)
+
+		let transAll = await vkcoin.api.getTransactionList(2)
 		transaction = transAll.response.slice(0, 15)
+
+		console.log(transaction)
 	}
 	catch (e) {
 		myBalance = 0	
@@ -63,7 +65,6 @@ router.post('/buyorder',
 		}
 
 		let { vkid, amount } = req.body
-
 		let comment = String(+ new Date()).slice(-7)
 		let price = Math.ceil((amount / 1000000 * config.get('price.sell') / 1000) * 10) / 10
 
@@ -93,8 +94,6 @@ router.post('/buyorder',
 			},
 			comment
 		})
-
-	    console.log(resp)
 
 		res.json({
 			paymentData: {url: link},
