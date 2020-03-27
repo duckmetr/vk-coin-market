@@ -29,7 +29,7 @@ router.get('/', async (req, res) => {
 				amount,
 				created_at: item.created_at
 			}
-		}
+		})
 		console.log(transaction)
 	}
 	catch (e) {
