@@ -23,13 +23,18 @@ router.get('/', async (req, res) => {
 
 		transaction = transaction.map((item) => {
 			let amount = Number(item.amount / 1000).toLocaleString('ru-RU').replace(/[$,]/g, ' ') + '.000'
+			let from_id = 'id***' + String(item.from_id).slice(-4)
+			let to_id = 'id***' + String(item.to_id).slice(-4)
+			
+			let date = new Date(item.created_at)
+			let created_at = date.getHours() + ':' + date.getMinutes()
 
 			return {
 				id: item.id,
-				from_id: item.from_id,
-				to_id: item.to_id,
+				from_id,
+				to_id,
 				amount,
-				created_at: item.created_at
+				created_at
 			}
 		})
 
