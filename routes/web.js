@@ -20,7 +20,7 @@ router.get('/', async (req, res) => {
 		transaction = transAll.response.slice(0, 15)
 		transaction = transaction.map((item) => {
 
-			let amount = (+item.amount / 1000).toLocaleString().replace(/[$,]/g, '.')
+			let amount = +item.amount.toLocaleString().replace(/[$,]/g, '.')
 
 			return {
 				id: item.id,
@@ -30,8 +30,6 @@ router.get('/', async (req, res) => {
 				created_at: item.created_at
 			}
 		})
-		console.log(transaction)
-		//jhjhkj
 	}
 	catch (e) {
 		myBalance = 0	
