@@ -9,11 +9,15 @@ const { check, validationResult } = require('express-validator')
 
 router.get('/', async (req, res) => {
 
-	let myBalance
-	let transaction
+	//let today = new Date()
+	//let ssstring = `2020-${today.getMonth()}-${today.getDate()}T12:59:58.685+00:00`
 
+	let myBalance, transaction, countSuccessDealAll, countSuccessDealToday
+	
 	try {
-		// myBalance = 20_000_000_634
+		countSuccessDealAll = await order.countDocuments({status: "Успех"})
+		//countSuccessDealToday = await order.countDocuments({status: "Успех", date: ssstring})
+
 		myBalance = await vkcoin.api.getMyBalance()
 
 		let transAll = await vkcoin.api.getTransactionList(2)
@@ -49,7 +53,9 @@ router.get('/', async (req, res) => {
 		transaction,
 		buy: config.get('price.buy'),
 		sell: config.get('price.sell'),
-		reserve: (myBalance / 1000).toLocaleString('ru-RU').replace(/[$,]/g, '.')
+		reserve: (myBalance / 1000).toLocaleString('ru-RU').replace(/[$,]/g, '.'),
+		countSuccessDealAll,
+		countSuccessDealToday
 	})
 })
 
@@ -58,7 +64,6 @@ router.post('/getinfo', async (req, res) => {
 	let myBalance
 
 	try {
-		// myBalance = 20_000_000_634
 		myBalance = await vkcoin.api.getMyBalance()
 	}
 	catch (e) {
