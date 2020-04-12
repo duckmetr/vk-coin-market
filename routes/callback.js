@@ -1,25 +1,24 @@
 const { Router } = require('express')
 const router = Router()
-const config = require('config')
+const config = require('../config')
 
 const vkcoin = require('../models/vkcoin.js')
 const order = require('../models/order.js')
 
-// router.get('/setcallback', async (req, res) => {
+// router.get('/set/vkcoin', async (req, res) => {
 // 	let status = await vkcoin.api.setCallback('https://f90b78ff.ngrok.io/callback/vkcoin')
 // 	res.status(200).json(status) 
 // })
 
-router.post('/callback/qiwi', async (req, res) => {
+router.post('/qiwi', async (req, res) => {
 
-	//console.log(req.body)
 	let { payment } = req.body
 
 	if (payment) {
 		let result = await order.findOne({
 			comment: payment.comment,
 			amount: payment.sum.amount,
-			vk: { from: payment.account, to: config.get('myQiwi') },
+			vk: { from: payment.account, to: config.myQiwi },
 			status: 'Ожидание оплаты'
 		})
 

@@ -1,14 +1,18 @@
 const express = require('express')
-const app = express()
 const exphbs = require('express-handlebars')
 const mongoose = require('mongoose')
 const fetch = require('node-fetch')
-const config = require('config')
+const config = require('./config')
+const errorHandler = require('./middleware/error.js')
+// const helmet = require('helmet')
+
+const homeRoutes = require('./routes/home')
+const callbackRoutes = require('./routes/callback')
 
 const vkcoin = require(__dirname + '/models/vkcoin.js')
 const order = require(__dirname + '/models/order.js')
 
-app.disable('x-powered-by')
+const app = express()
 
 const hbs =  exphbs.create({
 	extname: 'hbs',
@@ -17,18 +21,20 @@ const hbs =  exphbs.create({
 	partialsDir: __dirname + '/views/partials'
 })
 
+app.disable('x-powered-by')
 app.engine('hbs', hbs.engine)
 app.set('view engine', 'hbs')
 app.set('views', 'views')
 
-app.use(express.json())
-
-app.use(require(__dirname + '/routes/web.js'))
-app.use(require(__dirname + '/routes/callback.js'))
 app.use(express.static(__dirname + '/public'))
+app.use(express.json())
+// app.use(helmet())
+
+app.use('/', homeRoutes)
+app.use('/callback', callbackRoutes)
+app.use(errorHandler)
 
 app.use(vkcoin.updates.getExpressMiddleware('/callback/vkcoin'))
-
 vkcoin.updates.onTransfer(async (event) => {
 
 	let result = await order.findOne({
@@ -64,7 +70,7 @@ vkcoin.updates.onTransfer(async (event) => {
 				headers: {
 					'Content-Type': 'application/json',
 					Accept: 'application/json',
-					Authorization: `Bearer ${config.get('qiwiToken')}`
+					Authorization: `Bearer ${config.qiwiToken}`
 				},
 				body: JSON.stringify(data)
 			})
@@ -96,13 +102,12 @@ async function init() {
 			useUnifiedTopology: true
 		})
 
-		const PORT = process.env.PORT || config.get('PORT')
+		const PORT = process.env.PORT || 3000
 
 		app.listen(PORT, () => console.log(`Server is running on port: ${PORT}`))
 
 	} catch (e) {
 		console.log(e.message)
-		//process.exit(1)
 	}
 }
 

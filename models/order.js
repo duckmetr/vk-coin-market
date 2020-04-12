@@ -1,7 +1,6 @@
 const {Schema, model} = require('mongoose')
 
 const orderSchema = new Schema({
-	// _id: Schema.Types.ObjectId,
 	status: {
 		type: String,
 		default: 'Ожидание оплаты'

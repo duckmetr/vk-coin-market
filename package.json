@@ -5,8 +5,8 @@
   "main": "app.js",
   "scripts": {
     "start": "node app.js",
-    "server": "nodemon app.js",
-    "dev": "npx webpack --mode development",
+    "dev": "nodemon app.js",
+    "pack": "npx webpack --mode development",
     "build": "npx webpack --mode production",
     "watch": "npx webpack --mode development --watch"
   },

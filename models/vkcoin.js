@@ -1,7 +1,7 @@
 const VKCOINAPI = require('node-vkcoinapi');
-const config = require('config');
+const config = require('../config');
 
-let { key, userId, token } = config.get('vkcoin')
+let { key, userId, token } = config.vkcoin
 
 const vkcoin = new VKCOINAPI({key, userId, token});
 
