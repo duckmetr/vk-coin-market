@@ -3,7 +3,7 @@ const {Schema, model} = require('mongoose')
 const orderSchema = new Schema({
 	status: {
 		type: String,
-		default: 'Ожидание оплаты'
+		default: 'Ожидание'
 	},
 	vk: {
 		from: Number,
@@ -24,6 +24,7 @@ const orderSchema = new Schema({
 	exchangeRate: Number,
 	price: Number,
 	trade: {
+		cl: String,
 		tip: String,
 		buy: Boolean,
 		sell: Boolean 
@@ -31,11 +32,15 @@ const orderSchema = new Schema({
 	comment: {
 		type: String,
 		required: true,
-		// unique: true
+		//unique: true
 	},
 	date: {
-		type: Date,
-		//default: new Date()
+		full: Date,
+		mounths: Number,
+		days: Number,
+		hours: Number,
+		minutes: Number,
+		seconds: Number
 	}
 });
 

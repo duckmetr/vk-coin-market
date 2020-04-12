@@ -11,45 +11,41 @@ const { validationResult } = require('express-validator')
 
 router.get('/', async (req, res) => {
 
-	let reserve, transaction, countSuccessDealAll, countSuccessDealToday
+	let reserve, orders, countSuccessDealAll = 0, countSuccessDealToday = 0
 
 	try {
 		countSuccessDealAll = await order.countDocuments({status: "Успех"})
-		// countSuccessDealToday = await order.countDocuments({status: "Успех", date: 12})
+		countSuccessDealToday = await order.countDocuments({status: "Успех", date: 12})
 
-		reserve = await vkcoin.api.getMyBalance()
+		reserve = '0.000';//await vkcoin.api.getMyBalance()
 
-		let transAll = await vkcoin.api.getTransactionList(2)
-		transaction = transAll.response.slice(0, 15)
-		transaction = transaction.map((item) => {
+		orders = await order.find()
+		orders = orders.slice(0, 2)
+
+		orders = orders.map((item) => {
 			let amount = Number(item.amount / 1000).toLocaleString('ru-RU').replace(/[$,]/g, ' ') + '.000'
-			let from_id = '***' + String(item.from_id).slice(-4)
-			let to_id = '***' + String(item.to_id).slice(-4)
+			let from_id = '***' + String(item.vk.from).slice(-4)
+			let to_id = '***' + String(item.vk.to).slice(-4)
 			
-			let date = new Date(item.created_at)
+			let date = new Date(item.date)
 			let created_at = date.getHours() + ':' + date.getMinutes()
 
-			return {
-				id: item.id,
-				from_id,
-				to_id,
-				amount,
-				created_at
-			}
+			return {from_id, to_id, amount, created_at, trade: item.trade}
 		})
 	}
 	catch (e) {
-		reserve = 0	
-		transaction = null
+		reserve = '0.000'
+		orders = null
 	}
 
 	res.render('index', {
-		transaction,
+		// transaction,             
+		orders,
 		buy: config.price.buy,
 		sell: config.price.sell,
 		reserve: (reserve / 1000).toLocaleString('ru-RU').replace(/[$,]/g, '.'),
 		countSuccessDealAll,
-		countSuccessDealToday
+		countSuccessDealToday,
 	})
 })
 
@@ -100,14 +96,23 @@ router.post('/buyorder', buyValidator, async (req, res) => {
 		exchangeRate: config.price.sell,
 		price,
 		trade: {
+			cl: 'success',
 			tip: 'Покупка',
 			buy: true,
 			sell: false
 		},
-		comment
+		comment,
+		date: {
+			full: new Date(),
+			mounths: Date.now().getMounth(),
+			days: Date.now().getDay(),
+			hours: Date.now().getHours(),
+			minutes: Date.now().getMinutes(),
+			seconds: Date.now().getSeconds()
+		}
 	})
 
-	res.json({
+	res.staus(201).json({
 		paymentData: {url: link},
 		comment: resp._id,
 		detail: {vkid, amount, payload: resp._id}
@@ -142,11 +147,20 @@ router.post('/sellorder', sellValidator, async (req, res) => {
 		exchangeRate: config.price.buy,
 		price,
 		trade: {
+			cl: 'secondary',
 			tip: 'Продажа',
 			buy: false,
 			sell: true
 		},
-		comment
+		comment,
+		date: {
+			full: new Date(),
+			mounths: Date.now().getMounth(),
+			days: Date.now().getDay(),
+			hours: Date.now().getHours(),
+			minutes: Date.now().getMinutes(),
+			seconds: Date.now().getSeconds()
+		}
 	})
 
 	res.json({
@@ -168,22 +182,5 @@ router.get('/order/:order', async (req, res) => {
 		res.status(404).send('no found')
 	}
 })
-
-// router.post('/submit',
-// 	[
-// 	 check('vkid', 'Ваш ID вконтакте должен быть в цифровом виде').isInt({min: 1}),
-// 	 check('amount', 'Сумма должна быть не менее 1000 или не более резерва').isInt({min: 1e3, max: 1e20}),
-// 	 check('qiwi', 'Ваш QIWI кошелек указан неверно').isMobilePhone(['uk-UA', 'ru-RU'])
-// 	],
-// 	(req, res) => {
-
-// 		let errors = validationResult(req);
-// 		if (!errors.isEmpty()) {
-// 			return res.status(422).json({ errors: errors.array() });
-// 		}
-
-// 		res.json({ok:  errors.array()})
-// 	}
-// )
 
 module.exports = router

@@ -5,12 +5,11 @@
             <div class="form-row">
                 <table class="table table-sm table-borderless table-hover">
                     <tbody>
-                        {{#each transaction}}
+                        {{#each orders}}
                             <tr>
                                 <td><span class="d-md-inline">{{ created_at }}</span></td>
                                 <td><span class="d-md-inline">id{{ from_id }}</td>
-                                <td><span class="badge badge-success"><span class="d-md-inline">Куплено</span></span>
-                                </td>
+                                <td><span class="badge badge-{{ trade.cl }}"><span class="d-md-inline">{{ trade.tip }}</span></span></td>
                                 <td><span class="d-md-inline">{{ amount }} </span><span class="d-md-inline"><span class="DesktopContainer__coin smallcoin"></span></span>
                                 </td>
                             </tr>
