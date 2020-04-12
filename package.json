@@ -10,7 +10,13 @@
     "build": "npx webpack --mode production",
     "watch": "npx webpack --mode development --watch"
   },
-  "keywords": ["vk", "coin", "market", "buy", "sell"],
+  "keywords": [
+    "vk",
+    "coin",
+    "market",
+    "buy",
+    "sell"
+  ],
   "author": "",
   "license": "ISC",
   "devDependencies": {
